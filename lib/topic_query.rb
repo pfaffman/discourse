@@ -9,6 +9,46 @@ require_dependency 'topic_query_sql'
 require_dependency 'avatar_lookup'
 
 class TopicQuery
+  PG_MAX_INT ||= 2147483647
+
+  def self.validators
+    @validators ||= begin
+
+      int = lambda do |x|
+        Integer === x || (String === x && x.match?(/^-?[0-9]+$/))
+      end
+
+      zero_up_to_max_int = lambda do |x|
+        int.call(x) && x.to_i.between?(0, PG_MAX_INT)
+      end
+
+      one_up_to_max_int = lambda do |x|
+        int.call(x) && x.to_i.between?(1, PG_MAX_INT)
+      end
+
+      array_int_or_int = lambda do |x|
+        int.call(x) || (
+          Array === x && x.length > 0 && x.all?(&int)
+        )
+      end
+
+      {
+        max_posts: zero_up_to_max_int,
+        min_posts: zero_up_to_max_int,
+        page: zero_up_to_max_int,
+        exclude_category_ids: array_int_or_int
+      }
+    end
+  end
+
+  def self.validate?(option, value)
+
+    if fn = validators[option.to_sym]
+      fn.call(value)
+    else
+      true
+    end
+  end
 
   def self.public_valid_options
     @public_valid_options ||=
@@ -374,7 +414,7 @@ class TopicQuery
     end
 
     list = TopicList.new(filter, @user, topics, options.merge(@options))
-    list.per_page = per_page_setting
+    list.per_page = options[:per_page] || per_page_setting
     list
   end
 
@@ -594,11 +634,12 @@ class TopicQuery
       result = result.preload(:tags)
 
       if @options[:tags] && @options[:tags].size > 0
+        @options[:tags].each { |t| t.downcase! if t.is_a? String }
 
         if @options[:match_all_tags]
           # ALL of the given tags:
           tags_count = @options[:tags].length
-          @options[:tags] = Tag.where(name: @options[:tags]).pluck(:id) unless @options[:tags][0].is_a?(Integer)
+          @options[:tags] = Tag.where_name(@options[:tags]).pluck(:id) unless @options[:tags][0].is_a?(Integer)
 
           if tags_count == @options[:tags].length
             @options[:tags].each_with_index do |tag, index|
@@ -614,7 +655,7 @@ class TopicQuery
           if @options[:tags][0].is_a?(Integer)
             result = result.where("tags.id in (?)", @options[:tags])
           else
-            result = result.where("tags.name in (?)", @options[:tags])
+            result = result.where("lower(tags.name) in (?)", @options[:tags])
           end
         end
       elsif @options[:no_tags]
@@ -628,7 +669,7 @@ class TopicQuery
     result = apply_shared_drafts(result, category_id, options)
 
     if options[:exclude_category_ids] && options[:exclude_category_ids].is_a?(Array) && options[:exclude_category_ids].size > 0
-      result = result.where("categories.id NOT IN (?)", options[:exclude_category_ids]).references(:categories)
+      result = result.where("categories.id NOT IN (?)", options[:exclude_category_ids].map(&:to_i)).references(:categories)
     end
 
     # Don't include the category topics if excluded

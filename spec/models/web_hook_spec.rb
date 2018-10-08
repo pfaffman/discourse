@@ -82,7 +82,7 @@ describe WebHook do
     describe '#enqueue_hooks' do
       it 'accepts additional parameters' do
         payload = { test: 'some payload' }.to_json
-        WebHook.enqueue_hooks(:post, payload: payload)
+        WebHook.enqueue_hooks(:post, :post_created, payload: payload)
 
         job_args = Jobs::EmitWebHookEvent.jobs.first["args"].first
 
@@ -96,7 +96,7 @@ describe WebHook do
 
         describe '#enqueue_hooks' do
           it 'enqueues hooks with ids' do
-            WebHook.enqueue_hooks(:post)
+            WebHook.enqueue_hooks(:post, :post_created)
 
             job_args = Jobs::EmitWebHookEvent.jobs.first["args"].first
 
@@ -291,6 +291,16 @@ describe WebHook do
       expect(job_args["event_name"]).to eq("user_logged_in")
       payload = JSON.parse(job_args["payload"])
       expect(payload["id"]).to eq(user.id)
+
+      email = user.email
+      user.reload
+      UserDestroyer.new(Discourse.system_user).destroy(user)
+      job_args = Jobs::EmitWebHookEvent.jobs.last["args"].first
+
+      expect(job_args["event_name"]).to eq("user_destroyed")
+      payload = JSON.parse(job_args["payload"])
+      expect(payload["id"]).to eq(user.id)
+      expect(payload["email"]).to eq(email)
     end
 
     it 'should enqueue the right hooks for category events' do
@@ -409,6 +419,30 @@ describe WebHook do
       expect(job_args["event_name"]).to eq("flag_deferred")
       payload = JSON.parse(job_args["payload"])
       expect(payload["id"]).to eq(post_action.id)
+    end
+
+    it 'should enqueue the right hooks for queued post events' do
+      Fabricate(:queued_post_web_hook)
+      queued_post = Fabricate(:queued_post)
+      job_args = Jobs::EmitWebHookEvent.jobs.last["args"].first
+
+      expect(job_args["event_name"]).to eq("queued_post_created")
+      payload = JSON.parse(job_args["payload"])
+      expect(payload["id"]).to eq(queued_post.id)
+
+      queued_post.approve!(Discourse.system_user)
+      job_args = Jobs::EmitWebHookEvent.jobs.last["args"].first
+
+      expect(job_args["event_name"]).to eq("approved_post")
+      payload = JSON.parse(job_args["payload"])
+      expect(payload["id"]).to eq(queued_post.id)
+
+      queued_post.reject!(Discourse.system_user)
+      job_args = Jobs::EmitWebHookEvent.jobs.last["args"].first
+
+      expect(job_args["event_name"]).to eq("rejected_post")
+      payload = JSON.parse(job_args["payload"])
+      expect(payload["id"]).to eq(queued_post.id)
     end
   end
 end

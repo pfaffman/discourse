@@ -1,5 +1,4 @@
 %i(
-  topic_destroyed
   topic_recovered
 ).each do |event|
   DiscourseEvent.on(event) do |topic, _|
@@ -17,7 +16,6 @@ end
 
 %i(
   post_created
-  post_destroyed
   post_recovered
 ).each do |event|
   DiscourseEvent.on(event) do |post, _, _|
@@ -50,7 +48,6 @@ end
 %i(
   group_created
   group_updated
-  group_destroyed
 ).each do |event|
   DiscourseEvent.on(event) do |group|
     WebHook.enqueue_object_hooks(:group, group, event)
@@ -60,7 +57,6 @@ end
 %i(
   category_created
   category_updated
-  category_destroyed
 ).each do |event|
   DiscourseEvent.on(event) do |category|
     WebHook.enqueue_object_hooks(:category, category, event)
@@ -70,7 +66,6 @@ end
 %i(
   tag_created
   tag_updated
-  tag_destroyed
 ).each do |event|
   DiscourseEvent.on(event) do |tag|
     WebHook.enqueue_object_hooks(:tag, tag, event, TagSerializer)
@@ -85,5 +80,15 @@ end
 ).each do |event|
   DiscourseEvent.on(event) do |flag|
     WebHook.enqueue_object_hooks(:flag, flag, event)
+  end
+end
+
+%i(
+  queued_post_created
+  approved_post
+  rejected_post
+).each do |event|
+  DiscourseEvent.on(event) do |queued_post|
+    WebHook.enqueue_object_hooks(:queued_post, queued_post, event, QueuedPostSerializer)
   end
 end

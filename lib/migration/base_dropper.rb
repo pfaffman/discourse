@@ -1,5 +1,7 @@
 module Migration
   class BaseDropper
+    FUNCTION_SCHEMA_NAME = "discourse_functions".freeze
+
     def initialize(after_migration, delay, on_drop, after_drop)
       @after_migration = after_migration
       @on_drop = on_drop
@@ -46,6 +48,10 @@ module Migration
     end
 
     def self.create_readonly_function(table_name, column_name = nil)
+      DB.exec <<~SQL
+        CREATE SCHEMA IF NOT EXISTS #{FUNCTION_SCHEMA_NAME};
+      SQL
+
       message = column_name ?
                   "Discourse: #{column_name} in #{table_name} is readonly" :
                   "Discourse: #{table_name} is read only"
@@ -69,7 +75,29 @@ module Migration
     end
 
     def self.readonly_function_name(table_name, column_name = nil)
-      ["raise", table_name, column_name, "readonly()"].compact.join("_")
+      function_name = [
+        "raise",
+        table_name,
+        column_name,
+        "readonly()"
+      ].compact.join("_")
+
+      if DB.exec(<<~SQL).to_s == '1'
+         SELECT schema_name
+         FROM information_schema.schemata
+         WHERE schema_name = '#{FUNCTION_SCHEMA_NAME}'
+         SQL
+
+        "#{FUNCTION_SCHEMA_NAME}.#{function_name}"
+      else
+        function_name
+      end
+    end
+
+    def self.old_readonly_function_name(table_name, column_name = nil)
+      readonly_function_name(table_name, column_name).sub(
+        "#{FUNCTION_SCHEMA_NAME}.", ''
+      )
     end
 
     def self.readonly_trigger_name(table_name, column_name = nil)

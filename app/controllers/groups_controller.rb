@@ -3,6 +3,7 @@ class GroupsController < ApplicationController
     :set_notifications,
     :mentionable,
     :messageable,
+    :check_name,
     :update,
     :histories,
     :request_membership,
@@ -97,7 +98,13 @@ class GroupsController < ApplicationController
         type_filters: type_filters
       },
       total_rows_groups: count,
-      load_more_groups: groups_path(page: page + 1, type: type),
+      load_more_groups: groups_path(
+        page: page + 1,
+        type: type,
+        order: order,
+        asc: params[:asc],
+        filter: filter
+      ),
     )
   end
 
@@ -314,6 +321,12 @@ class GroupsController < ApplicationController
     end
   end
 
+  def check_name
+    group_name = params.require(:group_name)
+    checker = UsernameCheckerService.new(allow_reserved_username: true)
+    render json: checker.check_username(group_name, nil)
+  end
+
   def remove_member
     group = Group.find_by(id: params[:id])
     raise Discourse::NotFound unless group
@@ -341,8 +354,6 @@ class GroupsController < ApplicationController
         RateLimiter.new(current_user, "public_group_membership", 3, 1.minute).performed!
       end
     end
-
-    user.primary_group_id = nil if user.primary_group_id == group.id
 
     group.remove(user)
     GroupActionLogger.new(current_user, group).log_remove_user_from_group(user)

@@ -5,6 +5,7 @@ require_dependency 'enum'
 class Group < ActiveRecord::Base
   include HasCustomFields
   include AnonCacheInvalidator
+  include HasDestroyedWebHook
 
   cattr_accessor :preloaded_custom_field_names
   self.preloaded_custom_field_names = Set.new
@@ -25,7 +26,6 @@ class Group < ActiveRecord::Base
   before_save :cook_bio
 
   after_save :destroy_deletions
-  after_save :automatic_group_membership
   after_save :update_primary_group
   after_save :update_title
 
@@ -35,6 +35,7 @@ class Group < ActiveRecord::Base
   after_save :expire_cache
   after_destroy :expire_cache
 
+  after_commit :automatic_group_membership, on: [:create, :update]
   after_commit :trigger_group_created_event, on: :create
   after_commit :trigger_group_updated_event, on: :update
   after_commit :trigger_group_destroyed_event, on: :destroy
@@ -599,7 +600,15 @@ class Group < ActiveRecord::Base
   protected
 
   def name_format_validator
-    self.name.strip!
+
+    return if !name_changed?
+
+    # avoid strip! here, it works now
+    # but may not continue to work long term, especially
+    # once we start returning frozen strings
+    if self.name != (stripped = self.name.strip)
+      self.name = stripped
+    end
 
     UsernameValidator.perform_validation(self, 'name') || begin
       name_lower = self.name.downcase

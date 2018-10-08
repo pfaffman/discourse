@@ -66,9 +66,6 @@ class UserUpdater
       attributes[:title] != user.title &&
       guardian.can_grant_title?(user, attributes[:title])
       user.title = attributes[:title]
-      if user.badges.where(name: user.title).exists?
-        user_profile.badge_granted_title = true
-      end
     end
 
     CATEGORY_IDS.each do |attribute, level|
@@ -88,6 +85,7 @@ class UserUpdater
     # special handling for theme_id cause we need to bump a sequence number
     if attributes.key?(:theme_ids)
       user_guardian = Guardian.new(user)
+      attributes[:theme_ids].reject!(&:blank?)
       attributes[:theme_ids].map!(&:to_i)
       if user_guardian.allow_themes?(attributes[:theme_ids])
         user.user_option.theme_key_seq += 1 if user.user_option.theme_ids != attributes[:theme_ids]

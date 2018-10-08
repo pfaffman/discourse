@@ -24,18 +24,37 @@ class OptimizedImage < ActiveRecord::Base
     return unless width > 0 && height > 0
     return if upload.try(:sha1).blank?
 
+    # no extension so try to guess it
+    if (!upload.extension)
+      upload.fix_image_extension
+    end
+
+    if !upload.extension.match?(IM_DECODERS)
+      if !opts[:raise_on_error]
+        # nothing to do ... bad extension, not an image
+        return
+      else
+        raise InvalidAccess
+      end
+    end
+
+    # prefer to look up the thumbnail without grabbing any locks
+    thumbnail = find_by(upload_id: upload.id, width: width, height: height)
+
+    # correct bad thumbnail if needed
+    if thumbnail && thumbnail.url.blank?
+      thumbnail.destroy!
+      thumbnail = nil
+    end
+
+    return thumbnail if thumbnail
+
     lock(upload.id, width, height) do
-      # do we already have that thumbnail?
+      # may have been generated since we got the lock
       thumbnail = find_by(upload_id: upload.id, width: width, height: height)
 
-      # make sure we have an url
-      if thumbnail && thumbnail.url.blank?
-        thumbnail.destroy
-        thumbnail = nil
-      end
-
       # return the previous thumbnail if any
-      return thumbnail unless thumbnail.nil?
+      return thumbnail if thumbnail
 
       # create the thumbnail otherwise
       original_path = Discourse.store.path_for(upload)
@@ -48,7 +67,12 @@ class OptimizedImage < ActiveRecord::Base
         Rails.logger.error("Could not find file in the store located at url: #{upload.url}")
       else
         # create a temp file with the same extension as the original
-        extension = File.extname(original_path)
+        extension = ".#{upload.extension}"
+
+        if extension.length == 1
+          return nil
+        end
+
         temp_file = Tempfile.new(["discourse-thumbnail", extension])
         temp_path = temp_file.path
 
@@ -62,6 +86,7 @@ class OptimizedImage < ActiveRecord::Base
         end
 
         if resized
+
           thumbnail = OptimizedImage.create!(
             upload_id: upload.id,
             sha1: Upload.generate_digest(temp_path),
@@ -69,6 +94,7 @@ class OptimizedImage < ActiveRecord::Base
             width: width,
             height: height,
             url: "",
+            filesize: File.size(temp_path)
           )
           # store the optimized image and update its url
           File.open(temp_path) do |file|
@@ -104,6 +130,32 @@ class OptimizedImage < ActiveRecord::Base
     !(url =~ /^(https?:)?\/\//)
   end
 
+  def calculate_filesize
+    path =
+      if local?
+        Discourse.store.path_for(self)
+      else
+        Discourse.store.download(self).path
+      end
+    File.size(path)
+  end
+
+  def filesize
+    if size = read_attribute(:filesize)
+      size
+    else
+      # we may have a bad optimized image so just skip for now
+      # and do not break here
+      size = calculate_filesize rescue nil
+
+      write_attribute(:filesize, size)
+      if !new_record?
+        update_columns(filesize: size)
+      end
+      size
+    end
+  end
+
   def self.safe_path?(path)
     # this matches instructions which call #to_s
     path = path.to_s
@@ -118,12 +170,24 @@ class OptimizedImage < ActiveRecord::Base
     end
   end
 
+  IM_DECODERS ||= /\A(jpe?g|png|tiff?|bmp|ico|gif)\z/i
+
+  def self.prepend_decoder!(path, ext_path = nil, opts = nil)
+    extension = File.extname((opts && opts[:filename]) || ext_path || path)[1..-1]
+    raise Discourse::InvalidAccess if !extension || !extension.match?(IM_DECODERS)
+    "#{extension}:#{path}"
+  end
+
   def self.thumbnail_or_resize
     SiteSetting.strip_image_metadata ? "thumbnail" : "resize"
   end
 
   def self.resize_instructions(from, to, dimensions, opts = {})
     ensure_safe_paths!(from, to)
+
+    # note FROM my not be named correctly
+    from = prepend_decoder!(from, to, opts)
+    to = prepend_decoder!(to, to, opts)
 
     # NOTE: ORDER is important!
     %W{
@@ -159,6 +223,9 @@ class OptimizedImage < ActiveRecord::Base
   def self.crop_instructions(from, to, dimensions, opts = {})
     ensure_safe_paths!(from, to)
 
+    from = prepend_decoder!(from, to, opts)
+    to = prepend_decoder!(to, to, opts)
+
     %W{
       convert
       #{from}[0]
@@ -190,6 +257,9 @@ class OptimizedImage < ActiveRecord::Base
 
   def self.downsize_instructions(from, to, dimensions, opts = {})
     ensure_safe_paths!(from, to)
+
+    from = prepend_decoder!(from, to, opts)
+    to = prepend_decoder!(to, to, opts)
 
     %W{
       convert
@@ -223,20 +293,32 @@ class OptimizedImage < ActiveRecord::Base
 
   def self.optimize(operation, from, to, dimensions, opts = {})
     method_name = "#{operation}_instructions"
-    if !!opts[:allow_animation] && (from =~ /\.GIF$/i || opts[:filename] =~ /\.GIF$/i)
+    if !!opts[:allow_animation] && (from =~ /\.GIF$/i)
       method_name += "_animated"
     end
     instructions = self.send(method_name.to_sym, from, to, dimensions, opts)
-    convert_with(instructions, to)
+    convert_with(instructions, to, opts)
   end
 
-  def self.convert_with(instructions, to)
+  def self.convert_with(instructions, to, opts = {})
     Discourse::Utils.execute_command(*instructions)
     FileHelper.optimize_image!(to)
     true
   rescue => e
-    Rails.logger.error("Could not optimize image #{to}: #{e.message}")
-    false
+    if opts[:raise_on_error]
+      raise e
+    else
+      error = +"Failed to optimize image:"
+
+      if e.message =~ /^convert:([^`]+)/
+        error << $1
+      else
+        error << " unknown reason"
+      end
+
+      Discourse.warn(error, location: to, error_message: e.message)
+      false
+    end
   end
 
   def self.migrate_to_new_scheme(limit = nil)
@@ -317,6 +399,7 @@ end
 #  height    :integer          not null
 #  upload_id :integer          not null
 #  url       :string           not null
+#  filesize  :integer
 #
 # Indexes
 #

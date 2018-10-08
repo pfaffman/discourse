@@ -184,8 +184,8 @@ export default createWidget("topic-admin-menu", {
 
     const isPrivateMessage = topic.get("isPrivateMessage");
 
-    if (!isPrivateMessage && topic.get("visible")) {
-      const featured = topic.get("pinned_at") || topic.get("isBanner");
+    const featured = topic.get("pinned_at") || topic.get("isBanner");
+    if (!isPrivateMessage && (topic.get("visible") || featured)) {
       buttons.push({
         className: "topic-admin-pin",
         action: "showFeatureTopic",
@@ -200,6 +200,15 @@ export default createWidget("topic-admin-menu", {
         action: "showChangeTimestamp",
         icon: "calendar",
         label: "change_timestamp.title"
+      });
+    }
+
+    if (this.currentUser.get("staff")) {
+      buttons.push({
+        className: "topic-admin-reset-bump-date",
+        action: "resetBumpDate",
+        icon: "anchor",
+        label: "actions.reset_bump_date"
       });
     }
 

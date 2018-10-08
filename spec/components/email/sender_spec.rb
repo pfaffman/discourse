@@ -2,6 +2,7 @@ require 'rails_helper'
 require 'email/sender'
 
 describe Email::Sender do
+  let(:post) { Fabricate(:post) }
 
   context "disable_emails is enabled" do
     let(:user) { Fabricate(:user) }
@@ -292,19 +293,19 @@ describe Email::Sender do
       let(:email_log) { EmailLog.last }
 
       it 'should create the right log' do
-        email_sender.send
+        expect do
+          email_sender.send
+        end.to_not change { PostReplyKey.count }
 
         expect(email_log).to be_present
         expect(email_log.email_type).to eq('valid_type')
         expect(email_log.to_address).to eq('eviltrout@test.domain')
-        expect(email_log.reply_key).to be_blank
         expect(email_log.user_id).to be_blank
       end
     end
 
     context "email log with a post id and topic id" do
-      let(:topic) { Fabricate(:topic) }
-      let(:post) { Fabricate(:post, topic: topic) }
+      let(:topic) { post.topic }
 
       before do
         message.header['X-Discourse-Post-Id'] = post.id
@@ -320,19 +321,6 @@ describe Email::Sender do
       end
     end
 
-    context "email log with a reply key" do
-      before do
-        message.header['X-Discourse-Reply-Key'] = reply_key
-      end
-
-      let(:email_log) { EmailLog.last }
-
-      it 'should create the right log' do
-        email_sender.send
-        expect(email_log.reply_key).to eq(reply_key)
-      end
-    end
-
     context 'email parts' do
       it 'should contain the right message' do
         email_sender.send
@@ -343,6 +331,25 @@ describe Email::Sender do
         expect(message.html_part.body.to_s).to match("<p><strong>hello</strong></p>")
       end
     end
+  end
+
+  context 'with a deleted post' do
+
+    it 'should skip sending the email' do
+      post = Fabricate(:post, deleted_at: 1.day.ago)
+
+      message = Mail::Message.new to: 'disc@ourse.org', body: 'some content'
+      message.header['X-Discourse-Post-Id'] = post.id
+      message.header['X-Discourse-Topic-Id'] = post.topic_id
+      message.expects(:deliver_now).never
+
+      email_sender = Email::Sender.new(message, :valid_type)
+      expect { email_sender.send }.to change { SkippedEmailLog.count }
+
+      log = SkippedEmailLog.last
+      expect(log.reason_type).to eq(SkippedEmailLog.reason_types[:sender_post_deleted])
+    end
+
   end
 
   context 'with a user' do
@@ -364,6 +371,42 @@ describe Email::Sender do
       expect(@email_log.user_id).to eq(user.id)
     end
 
+    describe "post reply keys" do
+      let(:post) { Fabricate(:post) }
+
+      before do
+        message.header['X-Discourse-Post-Id'] = post.id
+        message.header['Reply-To'] = "test-%{reply_key}@test.com"
+      end
+
+      describe 'when allow reply by email header is not present' do
+        it 'should not create a post reply key' do
+          expect { email_sender.send }.to_not change { PostReplyKey.count }
+        end
+      end
+
+      describe 'when allow reply by email header is present' do
+        let(:header) { Email::MessageBuilder::ALLOW_REPLY_BY_EMAIL_HEADER }
+
+        before do
+          message.header[header] = "test-%{reply_key}@test.com"
+        end
+
+        it 'should create a post reply key' do
+          expect { email_sender.send }.to change { PostReplyKey.count }.by(1)
+          post_reply_key = PostReplyKey.last
+
+          expect(message.header['Reply-To'].value).to eq(
+            "test-#{post_reply_key.reply_key}@test.com"
+          )
+
+          expect(message.header[header]).to eq(nil)
+          expect(post_reply_key.user_id).to eq(user.id)
+          expect(post_reply_key.post_id).to eq(post.id)
+          expect { email_sender.send }.to change { PostReplyKey.count }.by(0)
+        end
+      end
+    end
   end
 
 end

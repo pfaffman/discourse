@@ -8,6 +8,7 @@ class Category < ActiveRecord::Base
   include HasCustomFields
   include CategoryHashtag
   include AnonCacheInvalidator
+  include HasDestroyedWebHook
 
   REQUIRE_TOPIC_APPROVAL = 'require_topic_approval'
   REQUIRE_REPLY_APPROVAL = 'require_reply_approval'
@@ -49,6 +50,8 @@ class Category < ActiveRecord::Base
   validate :email_in_validator
 
   validate :ensure_slug
+
+  validates :auto_close_hours, numericality: { greater_than: 0, less_than_or_equal_to: 87600 }, allow_nil: true
 
   after_create :create_category_definition
 
@@ -388,9 +391,10 @@ class Category < ActiveRecord::Base
 
   def self.auto_bump_topic!
     bumped = false
+
     auto_bumps = CategoryCustomField
       .where(name: Category::NUM_AUTO_BUMP_DAILY)
-      .where('value::int > 0')
+      .where('NULLIF(value, \'\')::int > 0')
       .pluck(:category_id)
 
     if (auto_bumps.length > 0)
@@ -399,13 +403,14 @@ class Category < ActiveRecord::Base
         break if bumped
       end
     end
+
     bumped
   end
 
   # will automatically bump a single topic
   # if number of automatically bumped topics is smaller than threshold
   def auto_bump_topic!
-    return false if num_auto_bump_daily.blank?
+    return false if num_auto_bump_daily.to_i == 0
 
     limiter = auto_bump_limiter
     return false if !limiter.can_perform?
@@ -622,7 +627,7 @@ end
 #
 #  id                                :integer          not null, primary key
 #  name                              :string(50)       not null
-#  color                             :string(6)        default("AB9364"), not null
+#  color                             :string(6)        default("0088CC"), not null
 #  topic_id                          :integer
 #  topic_count                       :integer          default(0), not null
 #  created_at                        :datetime         not null

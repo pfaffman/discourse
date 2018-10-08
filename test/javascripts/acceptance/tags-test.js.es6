@@ -1,13 +1,14 @@
 import { acceptance } from "helpers/qunit-helpers";
 acceptance("Tags", { loggedIn: true });
 
-QUnit.test("list the tags", assert => {
-  visit("/tags");
+QUnit.test("list the tags", async assert => {
+  await visit("/tags");
 
-  andThen(() => {
-    assert.ok($("body.tags-page").length, "has the body class");
-    assert.ok(exists(".tag-eviltrout"), "shows the evil trout tag");
-  });
+  assert.ok($("body.tags-page").length, "has the body class");
+  assert.ok(
+    $('*[data-tag-name="eviltrout"]').length,
+    "shows the eviltrout tag"
+  );
 });
 
 acceptance("Tags listed by group", {
@@ -17,7 +18,7 @@ acceptance("Tags listed by group", {
   }
 });
 
-QUnit.test("list the tags in groups", assert => {
+QUnit.test("list the tags in groups", async assert => {
   // prettier-ignore
   server.get("/tags", () => { // eslint-disable-line no-undef
     return [
@@ -31,7 +32,7 @@ QUnit.test("list the tags in groups", assert => {
               id: 2,
               name: "Ford Cars",
               tags: [
-                { id: "escort", text: "escort", count: 1, pm_count: 0 },
+                { id: "Escort", text: "Escort", count: 1, pm_count: 0 },
                 { id: "focus", text: "focus", count: 3, pm_count: 0 }
               ]
             },
@@ -57,30 +58,37 @@ QUnit.test("list the tags in groups", assert => {
     ];
   });
 
-  visit("/tags");
-  andThen(() => {
-    assert.equal(
-      $(".tag-list").length,
-      4,
-      "shows separate lists for the 3 groups and the ungrouped tags"
-    );
-    assert.ok(
-      _.isEqual(
-        _.map($(".tag-list h3"), i => {
-          return $(i).text();
-        }),
-        ["Ford Cars", "Honda Cars", "Makes", "Other Tags"]
-      ),
-      "shown in given order and with tags that are not in a group"
-    );
-    assert.ok(
-      _.isEqual(
-        _.map($(".tag-list:first .discourse-tag"), i => {
-          return $(i).text();
-        }),
-        ["focus", "escort"]
-      ),
-      "shows the tags in default sort (by count)"
-    );
-  });
+  await visit("/tags");
+  assert.equal(
+    $(".tag-list").length,
+    4,
+    "shows separate lists for the 3 groups and the ungrouped tags"
+  );
+  assert.deepEqual(
+    $(".tag-list h3")
+      .toArray()
+      .map(i => {
+        return $(i).text();
+      }),
+    ["Ford Cars", "Honda Cars", "Makes", "Other Tags"],
+    "shown in given order and with tags that are not in a group"
+  );
+  assert.deepEqual(
+    $(".tag-list:first .discourse-tag")
+      .toArray()
+      .map(i => {
+        return $(i).text();
+      }),
+    ["focus", "Escort"],
+    "shows the tags in default sort (by count)"
+  );
+  assert.deepEqual(
+    $(".tag-list:first .discourse-tag")
+      .toArray()
+      .map(i => {
+        return $(i).attr("href");
+      }),
+    ["/tags/focus", "/tags/escort"],
+    "always uses lowercase URLs for mixed case tags"
+  );
 });

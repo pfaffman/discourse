@@ -416,17 +416,16 @@ describe User do
   describe 'associated_accounts' do
     it 'should correctly find social associations' do
       user = Fabricate(:user)
-      expect(user.associated_accounts).to eq(I18n.t("user.no_accounts_associated"))
+      expect(user.associated_accounts).to eq([])
 
       TwitterUserInfo.create(user_id: user.id, screen_name: "sam", twitter_user_id: 1)
       FacebookUserInfo.create(user_id: user.id, username: "sam", facebook_user_id: 1)
       GoogleUserInfo.create(user_id: user.id, email: "sam@sam.com", google_user_id: 1)
       GithubUserInfo.create(user_id: user.id, screen_name: "sam", github_user_id: 1)
-      Oauth2UserInfo.create(user_id: user.id, provider: "linkedin", email: "sam@sam.com", uid: 1)
       InstagramUserInfo.create(user_id: user.id, screen_name: "sam", instagram_user_id: "examplel123123")
 
       user.reload
-      expect(user.associated_accounts).to eq("Twitter(sam), Facebook(sam), Google(sam@sam.com), GitHub(sam), Instagram(sam), linkedin(sam@sam.com)")
+      expect(user.associated_accounts.map { |a| a[:name] }).to contain_exactly('twitter', 'facebook', 'google_oauth2', 'github', 'instagram')
 
     end
   end
@@ -545,6 +544,16 @@ describe User do
     it 'returns false when a username is reserved' do
       SiteSetting.reserved_usernames = 'test|donkey'
       expect(User.username_available?('tESt')).to eq(false)
+    end
+
+    it 'returns true when reserved username is explicity allowed' do
+      SiteSetting.reserved_usernames = 'test|donkey'
+
+      expect(User.username_available?(
+        'tESt',
+        nil,
+        allow_reserved_username: true)
+      ).to eq(true)
     end
 
     it "returns true when username is associated to a staged user of the same email" do
@@ -1785,4 +1794,107 @@ describe User do
     end
   end
 
+  describe "ensure_consistency!" do
+
+    it "will clean up dangling avatars" do
+      upload = Fabricate(:upload)
+      user = Fabricate(:user, uploaded_avatar_id: upload.id)
+
+      upload.destroy!
+      user.reload
+      expect(user.uploaded_avatar_id).to eq(nil)
+
+      user.update_columns(uploaded_avatar_id: upload.id)
+
+      User.ensure_consistency!
+
+      user.reload
+      expect(user.uploaded_avatar_id).to eq(nil)
+    end
+
+  end
+
+  describe '#match_title_to_primary_group_changes' do
+    let(:primary_group_a) { Fabricate(:group, title: 'A', users: [user]) }
+    let(:primary_group_b) { Fabricate(:group, title: 'B', users: [user]) }
+
+    it "updates user's title only when it is blank or matches the previous primary group" do
+      expect { user.update(primary_group: primary_group_a) }.to change { user.reload.title }.from(nil).to('A')
+      expect { user.update(primary_group: primary_group_b) }.to change { user.reload.title }.from('A').to('B')
+
+      user.update(title: 'Different')
+      expect { user.update(primary_group: primary_group_a) }.to_not change { user.reload.title }
+    end
+  end
+
+  describe '#title=' do
+    let(:badge) { Fabricate(:badge, name: 'Badge', allow_title: false) }
+
+    it 'sets badge_granted_title correctly' do
+      BadgeGranter.grant(badge, user)
+
+      user.update!(title: badge.name)
+      expect(user.user_profile.reload.badge_granted_title).to eq(false)
+
+      user.update!(title: 'Custom')
+      expect(user.user_profile.reload.badge_granted_title).to eq(false)
+
+      badge.update!(allow_title: true)
+      user.update!(title: badge.name)
+      expect(user.user_profile.reload.badge_granted_title).to eq(true)
+
+      user.update!(title: nil)
+      expect(user.user_profile.reload.badge_granted_title).to eq(false)
+    end
+  end
+
+  describe '#next_best_title' do
+    let(:group_a) { Fabricate(:group, title: 'Group A') }
+    let(:group_b) { Fabricate(:group, title: 'Group B') }
+    let(:group_c) { Fabricate(:group, title: 'Group C') }
+    let(:badge) { Fabricate(:badge, name: 'Badge', allow_title: true) }
+
+    it 'only includes groups with title' do
+      group_a.add(user)
+      expect(user.next_best_title).to eq('Group A')
+
+      group_a.update!(title: nil)
+      expect(user.next_best_title).to eq(nil)
+    end
+
+    it 'only includes badges that allow to be set as title' do
+      BadgeGranter.grant(badge, user)
+      expect(user.next_best_title).to eq('Badge')
+
+      badge.update!(allow_title: false)
+      expect(user.next_best_title).to eq(nil)
+    end
+
+    it "picks the next best title in the order: user's primary group, primary group, groups, and badges" do
+      group_a.add(user)
+      group_b.add(user)
+      group_c.add(user)
+      BadgeGranter.grant(badge, user)
+
+      group_a.update!(primary_group: true)
+      group_b.update!(primary_group: true)
+      user.update!(primary_group_id: group_a.id)
+      expect(user.next_best_title).to eq('Group A')
+
+      user.update!(primary_group_id: group_b.id)
+      expect(user.next_best_title).to eq('Group B')
+
+      group_b.remove(user)
+      expect(user.next_best_title).to eq('Group A')
+
+      group_a.remove(user)
+      expect(user.next_best_title).to eq('Group C')
+
+      group_c.remove(user)
+      expect(user.next_best_title).to eq('Badge')
+
+      BadgeGranter.revoke(UserBadge.find_by(user_id: user.id, badge_id: badge.id))
+      expect(user.next_best_title).to eq(nil)
+    end
+  end
 end

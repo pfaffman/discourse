@@ -212,13 +212,6 @@ a.reply-to-tab {
       margin: 0 0 10px 0;
     }
   }
-  .participants {
-    // PMs //
-    .user {
-      float: left;
-      margin: 0 10px 10px 0;
-    }
-  }
   .buttons {
     .btn {
       border: 0;
@@ -305,12 +298,15 @@ span.post-count {
 
 // mobile has no fixed width on topic-body so overflow: hidden causes problems
 .topic-body {
-  overflow: inherit;
+  overflow: visible;
+  .cooked {
+    overflow: visible;
+  }
 }
 
-// instead, for mobile we set overflow hidden on the cooked part of post body
+// instead, for mobile we set overflow hidden on the post's #main-outlet
 // this prevents image overflow on deeply nested blockquotes, lists, etc
-.cooked {
+[class*="archetype-"] #main-outlet {
   overflow: hidden;
 }
 
@@ -363,18 +359,7 @@ iframe {
 }
 
 .selected-posts {
-  width: 97%;
   padding: 0.1em 0.7em;
-  background-color: srgb-scale($tertiary, $secondary, 15%);
-  .btn {
-    margin-bottom: 10px;
-    color: $secondary;
-    background: $tertiary;
-    clear: both;
-  }
-  p {
-    clear: both;
-  }
 }
 
 // hide the full set of selection buttons on mobile
@@ -385,18 +370,6 @@ iframe {
 // unhide the simple "select just this post" button
 button.select-post {
   display: inline-block;
-  position: absolute;
-  z-index: z("base") + 1;
-  left: 200px;
-  background-color: srgb-scale($tertiary, $secondary, 60%);
-  color: $secondary;
-  padding: 5px;
-}
-
-.post-select {
-  float: right;
-  margin-right: 20px;
-  margin-top: -20px;
 }
 
 .deleted {
@@ -455,21 +428,24 @@ span.highlighted {
     line-height: $line-height-medium;
     display: flex;
     flex-wrap: wrap;
+
     .full-name {
       font-weight: bold;
+    }
+
+    .first {
       order: 1;
     }
-    .staff-notes-icon {
-      order: 2;
-      margin-left: 4px;
-    }
+
     .poster-icon {
       order: 2;
     }
-    .username {
+
+    .second {
       order: 3;
       flex-basis: 100%;
     }
+
     .user-title {
       order: 4;
       flex-basis: 100%;
@@ -486,7 +462,6 @@ span.highlighted {
 
 .user-title {
   color: #aaa;
-  padding-top: 2px;
   overflow: hidden;
   margin-right: 50px;
 }

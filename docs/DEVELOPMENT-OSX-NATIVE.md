@@ -4,7 +4,7 @@ These instructions assume you have read and understood the **[Discourse Advanced
 
 OS X has become a popular platform for developing Ruby on Rails applications; as such, if you run OS X, you might find it more congenial to work on **[Discourse](http://discourse.org)** in your native environment. These instructions should get you there.
 
-Obviously, if you **already** develop Ruby on OS X, a lot of this will be redundant, because you'll have already done it, or something like it. If that's the case, you may well be able to just install Ruby 2.3 using RVM and get started! Discourse has enough dependencies, however (note: not a criticism!) that there's a good chance you'll find **something** else in this document that's useful for getting your Discourse development started!
+Obviously, if you **already** develop Ruby on OS X, a lot of this will be redundant, because you'll have already done it, or something like it. If that's the case, you may well be able to just install Ruby 2.4+ using RVM and get started! Discourse has enough dependencies, however (note: not a criticism!) that there's a good chance you'll find **something** else in this document that's useful for getting your Discourse development started!
 
 ## Quick Setup
 
@@ -76,11 +76,11 @@ If you do already have RVM installed, this should make sure everything is up to 
     # If autolibs is set to 0-2, it will give an error for things that are missing, instead.
     rvm requirements
 
-Either way, you'll now want to install the 'turbo' version of Ruby 2.0.
+Either way, you'll now want to install Ruby 2.4+ (we recommend 2.4.4 or higher).
 
     # Now, install Ruby
-    rvm install 2.3.4-turbo
-    rvm use 2.3.4 --default # Careful with this if you're already developing Ruby
+    rvm install 2.4.4
+    rvm use 2.4.4 --default # Careful with this if you're already developing Ruby
 
 ## Git
 
@@ -96,9 +96,9 @@ You should now be able to check out a clone of Discourse.
 
 Atlassian has a free Git client for OS X called [SourceTree](http://www.sourcetreeapp.com/download/) which can be extremely useful for keeping visual track of what's going on in Git-land. While it's arguably not a full substitute for command-line git (especially if you know the command line well), it's extremely powerful for a GUI version-control client.
 
-## Postgres 9.3
+## Postgres 10
 
-OS X ships with Postgres 9.1.5, but you're better off going with the latest from Homebrew or [Postgres.app](http://postgresapp.com).
+OS X might ship with Postgres 9.x, but you're better off going with 10 and above from Homebrew or [Postgres.app](http://postgresapp.com).
 
 ### Using Postgres.app
 
@@ -190,11 +190,9 @@ Download from https://www.google.com/chrome/index.html
 
 ## ImageMagick
 
-ImageMagick is used for generating avatars (including for test fixtures). Brew installs ImageMagick 7 by default, and this version
-doesn't work with Discourse.
+ImageMagick is used for generating avatars (including for test fixtures).
 
-    brew install imagemagick@6
-    brew link --force imagemagick@6
+    brew install imagemagick
 
 ImageMagick is going to want to use the Helvetica font to generate the
 letter-avatars:

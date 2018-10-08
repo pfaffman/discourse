@@ -63,12 +63,12 @@ describe Email::Receiver do
 
   it "doesn't raise an InactiveUserError when the sender is staged" do
     user = Fabricate(:user, email: "staged@bar.com", active: false, staged: true)
+    post = Fabricate(:post)
 
-    email_log = Fabricate(:email_log,
-      to_address: 'reply+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bar.com',
-      reply_key: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+    post_reply_key = Fabricate(:post_reply_key,
       user: user,
-      post: Fabricate(:post)
+      post: post,
+      reply_key: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     )
 
     expect { process(:staged_sender) }.not_to raise_error
@@ -79,10 +79,28 @@ describe Email::Receiver do
   end
 
   it "raises an OldDestinationError when notification is too old" do
-    topic = Fabricate(:topic, id: 424242)
-    post  = Fabricate(:post, topic: topic, id: 123456, created_at: 1.year.ago)
+    SiteSetting.disallow_reply_by_email_after_days = 2
 
-    expect { process(:old_destination) }.to raise_error(Email::Receiver::OldDestinationError)
+    topic = Fabricate(:topic, id: 424242)
+    post  = Fabricate(:post, topic: topic, id: 123456)
+
+    expect { process(:old_destination) }.to raise_error(
+      Email::Receiver::BadDestinationAddress
+    )
+
+    IncomingEmail.destroy_all
+    post.update!(created_at: 3.days.ago)
+
+    expect { process(:old_destination) }.to raise_error(
+      Email::Receiver::OldDestinationError
+    )
+
+    SiteSetting.disallow_reply_by_email_after_days = 0
+    IncomingEmail.destroy_all
+
+    expect { process(:old_destination) }.to raise_error(
+      Email::Receiver::BadDestinationAddress
+    )
   end
 
   it "raises a BouncerEmailError when email is a bounced email" do
@@ -129,6 +147,17 @@ describe Email::Receiver do
       expect(email_log_2.bounced).to eq(true)
     end
 
+    it "sends a system message once they reach the 'bounce_score_threshold'" do
+      expect(user.active).to eq(true)
+
+      user.user_stat.bounce_score = SiteSetting.bounce_score_threshold - 1
+      user.user_stat.save!
+
+      SystemMessage.expects(:create_from_system_user).with(user, :email_revoked)
+
+      expect { process(:hard_bounce_via_verp) }.to raise_error(Email::Receiver::BouncedEmailError)
+    end
+
     it "automatically deactive users once they reach the 'bounce_score_threshold_deactivate' threshold" do
       expect(user.active).to eq(true)
 
@@ -153,7 +182,14 @@ describe Email::Receiver do
     let(:user) { Fabricate(:user, email: "discourse@bar.com") }
     let(:topic) { create_topic(category: category, user: user) }
     let(:post) { create_post(topic: topic, user: user) }
-    let!(:email_log) { Fabricate(:email_log, reply_key: reply_key, user: user, topic: topic, post: post) }
+
+    let!(:post_reply_key) do
+      Fabricate(:post_reply_key,
+        reply_key: reply_key,
+        user: user,
+        post: post
+      )
+    end
 
     it "uses MD5 of 'mail_string' there is no message_id" do
       mail_string = email(:missing_message_id)
@@ -200,7 +236,7 @@ describe Email::Receiver do
     end
 
     it "raises an InvalidPost when there was an error while creating the post" do
-      expect { process(:too_small) }.to raise_error(Email::Receiver::InvalidPost)
+      expect { process(:too_small) }.to raise_error(Email::Receiver::TooShortPost)
     end
 
     it "raises an InvalidPost when there are too may mentions" do
@@ -315,6 +351,12 @@ describe Email::Receiver do
       expect { process(:staged_reply_restricted) }.to change { topic.posts.count }
     end
 
+    it "posts a reply to the topic when the post was deleted" do
+      post.update_columns(deleted_at: 1.day.ago)
+      expect { process(:reply_user_matching) }.to change { topic.posts.count }
+      expect(topic.ordered_posts.last.reply_to_post_number).to be_nil
+    end
+
     describe 'Unsubscribing via email' do
       let(:last_email) { ActionMailer::Base.deliveries.last }
 
@@ -423,10 +465,24 @@ describe Email::Receiver do
       SiteSetting.authorized_extensions = "txt"
       expect { process(:attached_txt_file) }.to change { topic.posts.count }
       expect(topic.posts.last.raw).to match(/text\.txt/)
+    end
 
-      SiteSetting.authorized_extensions = "csv"
-      expect { process(:attached_txt_file_2) }.to change { topic.posts.count }
-      expect(topic.posts.last.raw).to_not match(/text\.txt/)
+    context "when attachment is rejected" do
+      it "sends out the warning email" do
+        expect { process(:attached_txt_file) }.to change { EmailLog.count }.by(1)
+        expect(EmailLog.last.email_type).to eq("email_reject_attachment")
+      end
+
+      it "doesn't send out the warning email if sender is staged user" do
+        user.update_columns(staged: true)
+        expect { process(:attached_txt_file) }.not_to change { EmailLog.count }
+      end
+
+      it "creates the post with attachment missing message" do
+        missing_attachment_regex = Regexp.escape(I18n.t('emails.incoming.missing_attachment', filename: "text.txt"))
+        expect { process(:attached_txt_file) }.to change { topic.posts.count }
+        expect(topic.posts.last.raw).to match(/#{missing_attachment_regex}/)
+      end
     end
 
     it "supports emails with just an attachment" do
@@ -532,32 +588,47 @@ describe Email::Receiver do
       expect(Topic.last.ordered_posts[-1].post_type).to eq(Post.types[:moderator_action])
     end
 
-    it "associates email replies using both 'In-Reply-To' and 'References' headers when 'find_related_post_with_key' is disabled" do
-      SiteSetting.find_related_post_with_key = false
+    describe "when 'find_related_post_with_key' is disabled" do
+      before do
+        SiteSetting.find_related_post_with_key = false
+      end
 
-      expect { process(:email_reply_1) }.to change(Topic, :count)
+      it "associates email replies using both 'In-Reply-To' and 'References' headers" do
+        expect { process(:email_reply_1) }
+          .to change(Topic, :count).by(1) & change(Post, :count).by(3)
 
-      topic = Topic.last
+        topic = Topic.last
+        ordered_posts = topic.ordered_posts
 
-      expect { process(:email_reply_2) }.to change { topic.posts.count }
-      expect { process(:email_reply_3) }.to change { topic.posts.count }
+        expect(ordered_posts.first.raw).to eq('This is email reply **1**.')
 
-      # Why 5 when we only processed 3 emails?
-      #   - 3 of them are indeed "regular" posts generated from the emails
-      #   - The 2 others are "small action" posts automatically added because
-      #     we invited 2 users (two@foo.com and three@foo.com)
-      expect(topic.posts.count).to eq(5)
+        ordered_posts[1..-1].each do |post|
+          expect(post.action_code).to eq('invited_user')
+          expect(post.user.email).to eq('one@foo.com')
 
-      # trash all but the 1st post
-      topic.ordered_posts[1..-1].each(&:trash!)
+          expect(%w{two three}.include?(post.custom_fields["action_code_who"]))
+            .to eq(true)
+        end
 
-      expect { process(:email_reply_4) }.to change { topic.posts.count }
+        expect { process(:email_reply_2) }.to change { topic.posts.count }.by(1)
+        expect { process(:email_reply_3) }.to change { topic.posts.count }.by(1)
+        ordered_posts[1..-1].each(&:trash!)
+        expect { process(:email_reply_4) }.to change { topic.posts.count }.by(1)
+      end
     end
 
     it "supports any kind of attachments when 'allow_all_attachments_for_group_messages' is enabled" do
       SiteSetting.allow_all_attachments_for_group_messages = true
       expect { process(:attached_rb_file) }.to change(Topic, :count)
       expect(Post.last.raw).to match(/discourse\.rb/)
+    end
+
+    it "enables user's email_private_messages option when user emails group" do
+      user = Fabricate(:user, email: "existing@bar.com")
+      user.user_option.update_columns(email_private_messages: false)
+      expect { process(:group_existing_user) }.to change(Topic, :count)
+      user.reload
+      expect(user.user_option.email_private_messages).to eq(true)
     end
 
     context "with forwarded emails enabled" do
@@ -604,7 +675,6 @@ describe Email::Receiver do
 
     context "when message sent to a group has no key and find_related_post_with_key is enabled" do
       let!(:topic) do
-        SiteSetting.find_related_post_with_key = true
         process(:email_reply_1)
         Topic.last
       end
@@ -814,12 +884,15 @@ describe Email::Receiver do
 
     context "with a valid reply" do
       it "returns the destination when the key is valid" do
-        Fabricate(:email_log, reply_key: '4f97315cc828096c9cb34c6f1a0d6fe8')
+        post_reply_key = Fabricate(:post_reply_key,
+          reply_key: '4f97315cc828096c9cb34c6f1a0d6fe8'
+        )
 
         dest = Email::Receiver.check_address('foo+4f97315cc828096c9cb34c6f1a0d6fe8@bar.com')
+
         expect(dest).to be_present
         expect(dest[:type]).to eq(:reply)
-        expect(dest[:obj]).to be_present
+        expect(dest[:obj]).to eq(post_reply_key)
       end
     end
   end
@@ -925,7 +998,10 @@ describe Email::Receiver do
       let(:user) { Fabricate(:user, email: "discourse@bar.com") }
       let(:topic) { create_topic(category: category, user: user) }
       let(:post) { create_post(topic: topic, user: user) }
-      let!(:email_log) { Fabricate(:email_log, reply_key: reply_key, user: user, topic: topic, post: post) }
+
+      let!(:post_reply_key) do
+        Fabricate(:post_reply_key, reply_key: reply_key, user: user, post: post)
+      end
 
       context "when the email address isn't matching the one we sent the notification to" do
         include_examples "no staged users", :reply_user_not_matching, Email::Receiver::ReplyUserNotMatchingError
@@ -977,7 +1053,6 @@ describe Email::Receiver do
 
     before do
       SiteSetting.block_auto_generated_emails = true
-      SiteSetting.find_related_post_with_key = true
     end
 
     it "should allow creating topic even when email is autogenerated" do

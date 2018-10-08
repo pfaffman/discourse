@@ -17,6 +17,26 @@ describe CategoriesController do
       get "/categories"
       expect(response.body).not_to include('AMAZING AMAZING')
     end
+
+    it 'web crawler view has correct urls for subfolder install' do
+      GlobalSetting.stubs(:relative_url_root).returns('/forum')
+      Discourse.stubs(:base_uri).returns("/forum")
+      get '/categories', headers: { 'HTTP_USER_AGENT' => 'Googlebot' }
+      html = Nokogiri::HTML(response.body)
+      expect(html.css('body.crawler')).to be_present
+      expect(html.css("a[href=\"/forum/c/#{category.slug}\"]")).to be_present
+    end
+
+    it "properly preloads topic list" do
+      SiteSetting.categories_topics = 5
+      SiteSetting.categories_topics.times { Fabricate(:topic) }
+      get "/categories"
+
+      expect(response.body).to have_tag("div#data-preloaded") do |element|
+        json = JSON.parse(element.current_scope.attribute('data-preloaded').value)
+        expect(json['topic_list_latest']).to include(%{"more_topics_url":"/latest"})
+      end
+    end
   end
 
   context 'extensibility event' do
@@ -82,6 +102,18 @@ describe CategoriesController do
           }
 
           expect(response.status).to eq(422)
+        end
+
+        it "returns errors with invalid group" do
+          category = Fabricate(:category, user: admin)
+          readonly = CategoryGroup.permission_types[:readonly]
+
+          post "/categories.json", params: {
+            name: category.name, color: "ff0", text_color: "fff", permissions: { "invalid_group" => readonly }
+          }
+
+          expect(response.status).to eq(422)
+          expect(JSON.parse(response.body)['errors']).to be_present
         end
       end
 

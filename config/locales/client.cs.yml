@@ -235,7 +235,7 @@ cs:
     guidelines: "Pokyny"
     privacy_policy: "Ochrana soukromí"
     privacy: "Soukromí"
-    terms_of_service: "Podmínky používání"
+    tos: "Podmínky používání"
     mobile_view: "Mobilní verze"
     desktop_view: "Plná verze"
     you: "Vy"
@@ -269,6 +269,8 @@ cs:
       our_moderators: "Naši Moderátoři"
       stat:
         all_time: "Za celou dobu"
+        last_7_days: "Posledních 7"
+        last_30_days: "Posledních 30"
       like_count: "Líbí se"
       topic_count: "Témata"
       post_count: "Příspěvky"
@@ -532,17 +534,15 @@ cs:
       "12": "Odeslané zprávy"
       "13": "Přijaté zprávy"
       "14": "Čeká na schválení"
+      "15": "Koncepty"
     categories:
       all: "všechny kategorie"
-      all_subcategories: "všechny v %{categoryName}"
       no_subcategory: "žádné"
       category: "Kategorie"
       category_list: "Zobrazit seznam kategorií"
       reorder:
         title: "Přeřadit kategorie"
         title_long: "Přeorganizovat seznam kategorií"
-        fix_order: "Zafixovat umístění"
-        fix_order_tooltip: "Ne všechny kategorie mají jedinečné číslo umístěni, což může způsobovat nečekané následky."
         save: "Uložit pořadí"
         apply_all: "Použít"
         position: "Umístění"
@@ -744,7 +744,6 @@ cs:
         upload_title: "Nahrát obrázek"
         upload_picture: "Nahrát obrázek"
         image_is_not_a_square: "Varování: Ořízli jsme váš obrázek; šířka a délka nebyla stejná."
-        cache_notice: "Úspěšně jste změnili váš profilový obrázek, ale chvíli může trvat, než se zobrazí kvůli ukládání v mezipaměti prohlížeče. "
       change_profile_background:
         title: "Pozadí profilu"
         instructions: "Pozadí profilu je zarovnáno doprostřed a má výchozí šířku 850px."
@@ -952,7 +951,6 @@ cs:
         most_liked_users: "Nejvíce \"to se mi líbí\""
         most_replied_to_users: "Nejvíce odpovědí"
         no_likes: "Zatím žádné \"to se mi líbí\""
-      associated_accounts: "Přihlášení"
       ip_address:
         title: "Poslední IP adresa"
       registration_ip_address:
@@ -1038,8 +1036,6 @@ cs:
       hide_session: "Připomenout mi zítra"
       hide_forever: "děkuji, ne"
       hidden_for_session: "Dobrá, zeptám se tě zítra. Pro založení účtu můžeš také vždy použít 'Přihlásit se'."
-      intro: "Nazdar! :heart_eyes: Vypadá to, že si užíváš diskuzi, ale zatím jsi si nezaložil účet."
-      value_prop: "Pokud si založíš účet, budeme si přesně pamatovat, co jsi četl, takže se vždycky vrátíš do bodu, odkud jsi odešel. Také budeš dostávat upozornění zde a přes e-mail, kdykoli přibudou nově příspěvky. A můžeš přidávat 'to se mi líbí' a šířit tak lásku. :heartbeat:"
     summary:
       enabled_description: "Čtete shrnutí tohoto tématu: nejzajímavější příspěvky podle komunity."
       description: "Je tu <b>{{replyCount}}</b> odpovědí."
@@ -1053,7 +1049,6 @@ cs:
       disable: "Zobrazit smazané příspěvky"
     private_message_info:
       title: "Zpráva"
-      invite: "Pozvat další..."
       leave_message: "Opravdu chcete opustit tuto zprávu?"
       remove_allowed_user: "Určitě chcete odstranit {{name}} z této zprávy?"
       remove_allowed_group: "Opravdu chcete odstranit {{name}} z této zprávy?"
@@ -1117,25 +1112,28 @@ cs:
       preferences: "Pro to, aby jsi mohl měnit své uživatelské nastavení, se musíš přihlásit."
       forgot: "Nevybavuju si podrobnosti svého účtu"
       not_approved: "Váš účet zatím nebyl schválen. Až se tak stane, obdržíte oznámení emailem a budete se moci přihlásit."
-      google:
-        title: "přes Google"
-        message: "Autentizuji přes Google (ujistěte se, že nemáte zablokovaná popup okna)"
       google_oauth2:
+        name: "Google"
         title: "přes Google"
         message: "Přihlašování přes Google (ujistěte se že nemáte zaplé blokování pop up oken)"
       twitter:
+        name: "Twitter"
         title: "přes Twitter"
         message: "Autentizuji přes Twitter (ujistěte se, že nemáte zablokovaná popup okna)"
       instagram:
+        name: "Instagram"
         title: "s Instagramem"
         message: "Autentizuji pres Instagram (ujistěte se, že nemáte zablokovaná popup okna)"
       facebook:
+        name: "Facebook"
         title: "přes Facebook"
         message: "Autentizuji přes Facebook (ujistěte se, že nemáte zablokovaná popup okna)"
       yahoo:
+        name: "Yahoo"
         title: "přes Yahoo"
         message: "Autentizuji přes Yahoo (ujistěte se, že nemáte zablokovaná popup okna)"
       github:
+        name: "GitHub"
         title: "přes GitHub"
         message: "Autentizuji přes GitHub (ujistěte se, že nemáte zablokovaná popup okna)"
     invites:
@@ -1291,6 +1289,7 @@ cs:
         body: "Nyní tuto zprávu posíláte pouze sám/sama sobě!"
       admin_options_title: "Volitelné redakční nastavení tématu"
       composer_actions:
+        edit: Upravit
         reply_to_post:
           label: "Odpovědět na příspěvek %{postNumber} od %{postUsername}"
           desc: Odpovědět na konkrétní příspěvek
@@ -1655,6 +1654,7 @@ cs:
         jump_prompt_of: "%{count} příspěvků"
         jump_prompt_long: "Na který příspěvek chcete přejít?"
         jump_bottom_with_number: "Skočit na příspěvěk %{post_number}"
+        jump_prompt_or: "nebo"
         total: celkem příspěvků
         current: aktuální příspěvek
       notifications:
@@ -1991,7 +1991,6 @@ cs:
           inappropriate: "Zrušit nahlášení"
           bookmark: "Odebrat ze záložek"
           like: "Už se mi to nelíbí"
-          vote: "Zrušit hlas"
         people:
           off_topic: "označil příspěvek jako off-topic"
           spam: "označil příspěvek jako spam"
@@ -2005,7 +2004,6 @@ cs:
             few: "a {{count}} dalším se to líbí"
             many: "a {{count}} dalším se to líbí"
             other: "a {{count}} dalším se to líbí"
-          vote: "hlasoval pro tento příspěvek"
         by_you:
           off_topic: "Označili jste tento příspěvek jako off-topic"
           spam: "Označili jste tento příspěvek jako spam"
@@ -2014,7 +2012,6 @@ cs:
           notify_user: "Tomuto uživateli jste zaslali zprávu"
           bookmark: "Přidali jste si tento příspěvek do záložek"
           like: "Toto se vám líbí"
-          vote: "Hlasovali jste pro tento příspěvek"
         by_you_and_others:
           off_topic:
             one: "Vy a 1 další člověk jste označili tento příspěvek jako off-topic"
@@ -2051,11 +2048,6 @@ cs:
             few: "Vám a {{count}} dalším lidem se tento příspěvek líbí"
             many: "Vám a {{count}} dalším lidem se tento příspěvek líbí"
             other: "Vám a {{count}} dalším lidem se tento příspěvek líbí"
-          vote:
-            one: "Vy a 1 další člověk jste hlasovali pro tento příspěvek"
-            few: "Vy a {{count}} další lidé jste hlasovali pro tento příspěvek"
-            many: "Vy a {{count}} dalších lidí jste hlasovali pro tento příspěvek"
-            other: "Vy a {{count}} dalších lidí jste hlasovali pro tento příspěvek"
         by_others:
           off_topic:
             one: "1 člověk označil tento příspěvek jako off-topic"
@@ -2092,11 +2084,6 @@ cs:
             few: "{{count}} lidem se tento příspěvek líbí"
             many: "{{count}} lidem se tento příspěvek líbí"
             other: "{{count}} lidem se tento příspěvek líbí"
-          vote:
-            one: "1 člověk hlasoval pro tento příspěvek"
-            few: "{{count}} lidé hlasovali pro tento příspěvek"
-            many: "{{count}} lidí hlasovalo pro tento příspěvek"
-            other: "{{count}} lidí hlasovalo pro tento příspěvek"
       delete:
         confirm:
           one: "Jsi si jistý, že chceš smazat tento příspěvek?"
@@ -2146,7 +2133,6 @@ cs:
       can: 'smí&hellip; '
       none: '(bez kategorie)'
       all: 'Všechny kategorie'
-      choose: 'Vyberte kategorii&hellip;'
       edit: 'upravit'
       edit_long: "Upravit"
       view: 'Zobrazit témata v kategorii'
@@ -2195,7 +2181,6 @@ cs:
       show_subcategory_list: "Ukázat seznam podkategorií nad tématy v této kategorii."
       num_featured_topics: "Počet témat, která se zobrazují na stránce kategorie "
       subcategory_num_featured_topics: "Počet zobrazených témat na stránce nadřazené kategorie:"
-      all_topics_wiki: "Vytvořit nové wiki témat ve výchozím nastavení."
       subcategory_list_style: "Styl seznamu podkategorií: "
       sort_order: "Seznam témat seřazený podle: "
       default_view: "Výchozí seznam témat: "
@@ -2204,7 +2189,6 @@ cs:
       edit_permissions: "Upravit oprávnění"
       add_permission: "Přidat oprávnění"
       this_year: "letos"
-      position: "umístění"
       default_position: "Výchozí umístění"
       position_disabled: "Kategorie jsou zobrazovány podle pořadí aktivity. Pro kontrolu pořadí kategorií v seznamech,"
       position_disabled_click: 'povolte nastavení "neměnné pozice kategorií" (fixed category positions).'
@@ -2684,6 +2668,8 @@ cs:
         reports:
           today: "Dnes"
           yesterday: "Včera"
+          last_7_days: "Posledních 7"
+          last_30_days: "Posledních 30"
           all_time: "Za celou dobu"
           7_days_ago: "Týden"
           30_days_ago: "Měsíc"
@@ -3053,7 +3039,6 @@ cs:
           public_key: "Přidělit přístup k repo následujícím veřejným klíčem:"
           about_theme: "O motivu "
           license: "Licence"
-          component_of: "Motiv je součástí: "
           update_to_latest: "Aktualizovat na nejnovější"
           check_for_updates: "kontrola aktualizací"
           updating: "Aktualizace..."
@@ -3197,7 +3182,6 @@ cs:
             address_placeholder: "jmeno@priklad.cz"
             type_placeholder: "souhrn, registrace..."
             reply_key_placeholder: "klíč pro odpověď"
-            skipped_reason_placeholder: "důvod"
       moderation_history:
         performed_by: "Provedeno uživatelem"
         no_results: "Není k dispozici žádná historie akcí moderátorů."

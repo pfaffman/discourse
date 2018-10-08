@@ -1,11 +1,11 @@
 import ComboBox from "select-kit/components/combo-box";
-import Tags from "select-kit/mixins/tags";
+import TagsMixin from "select-kit/mixins/tags";
 import { default as computed } from "ember-addons/ember-computed-decorators";
 import renderTag from "discourse/lib/render-tag";
 import { escapeExpression } from "discourse/lib/utilities";
 const { get, isEmpty, run, makeArray } = Ember;
 
-export default ComboBox.extend(Tags, {
+export default ComboBox.extend(TagsMixin, {
   allowContentReplacement: true,
   headerComponent: "mini-tag-chooser/mini-tag-chooser-header",
   pluginApiIdentifiers: ["mini-tag-chooser"],
@@ -22,7 +22,7 @@ export default ComboBox.extend(Tags, {
   fullWidthOnMobile: true,
 
   init() {
-    this._super();
+    this._super(...arguments);
 
     this.set("termMatchesForbidden", false);
     this.selectionSelector = ".selected-tag";
@@ -45,6 +45,26 @@ export default ComboBox.extend(Tags, {
     );
   },
 
+  didInsertElement() {
+    this._super(...arguments);
+
+    this.$(".select-kit-body").on(
+      "mousedown touchstart",
+      ".selected-tag",
+      event => {
+        const $button = $(event.target);
+        this._destroyEvent(event);
+        this.destroyTags(this.computeContentItem($button.attr("data-value")));
+      }
+    );
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+
+    this.$(".select-kit-body").off("mousedown touchstart");
+  },
+
   @computed("hasReachedMaximum")
   caretIcon(hasReachedMaximum) {
     return hasReachedMaximum ? null : "plus fa-fw";
@@ -57,37 +77,6 @@ export default ComboBox.extend(Tags, {
 
   filterComputedContent(computedContent) {
     return computedContent;
-  },
-
-  didRender() {
-    this._super();
-
-    this.$(".select-kit-body").on(
-      "click.mini-tag-chooser",
-      ".selected-tag",
-      event => {
-        event.stopImmediatePropagation();
-        this.destroyTags(
-          this.computeContentItem($(event.target).attr("data-value"))
-        );
-      }
-    );
-
-    this.$(".select-kit-header").on(
-      "focus.mini-tag-chooser",
-      ".selected-name",
-      event => {
-        event.stopImmediatePropagation();
-        this.focus(event);
-      }
-    );
-  },
-
-  willDestroyElement() {
-    this._super();
-
-    this.$(".select-kit-body").off("click.mini-tag-chooser");
-    this.$(".select-kit-header").off("focus.mini-tag-chooser");
   },
 
   // we are directly mutatings tags to define the current selection
@@ -229,6 +218,28 @@ export default ComboBox.extend(Tags, {
 
   didDeselect(tags) {
     this.destroyTags(tags);
+  },
+
+  _sanitizeContent(content, property) {
+    switch (typeof content) {
+      case "string":
+        // See lib/discourse_tagging#clean_tag.
+        return content
+          .trim()
+          .replace(/\s+/, "-")
+          .replace(/[\/\?#\[\]@!\$&'\(\)\*\+,;=\.%\\`^\s|\{\}"<>]+/, "")
+          .substring(0, this.siteSettings.max_tag_length);
+      default:
+        return get(content, this.get(property));
+    }
+  },
+
+  valueForContentItem(content) {
+    return this._sanitizeContent(content, "valueAttribute");
+  },
+
+  _nameForContent(content) {
+    return this._sanitizeContent(content, "nameProperty");
   },
 
   actions: {

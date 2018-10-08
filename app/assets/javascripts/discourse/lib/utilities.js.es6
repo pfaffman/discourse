@@ -140,13 +140,6 @@ export function selectedText() {
     $div.append(range.cloneContents());
   }
 
-  // strip click counters
-  $div.find(".clicks").remove();
-  // replace emojis
-  $div.find("img.emoji").replaceWith(function() {
-    return this.title;
-  });
-
   return toMarkdown($div.html());
 }
 
@@ -441,8 +434,9 @@ export function uploadLocation(url) {
 export function getUploadMarkdown(upload) {
   if (isAnImage(upload.original_filename)) {
     const name = imageNameFromFileName(upload.original_filename);
-    return `![${name}|${upload.width}x${upload.height}](${upload.short_url ||
-      upload.url})`;
+    return `![${name}|${upload.thumbnail_width}x${
+      upload.thumbnail_height
+    }](${upload.short_url || upload.url})`;
   } else if (
     !Discourse.SiteSettings.prevent_anons_from_downloading_files &&
     /\.(mov|mp4|webm|ogv|mp3|ogg|wav|m4a)$/i.test(upload.original_filename)
@@ -591,6 +585,10 @@ export function clipboardData(e, canUpload) {
   return { clipboard, types, canUpload, canPasteHtml };
 }
 
+export function isNumeric(input) {
+  return !isNaN(parseFloat(input)) && isFinite(input);
+}
+
 export function fillMissingDates(data, startDate, endDate) {
   const startMoment = moment(startDate, "YYYY-MM-DD");
   const endMoment = moment(endDate, "YYYY-MM-DD");
@@ -611,6 +609,18 @@ export function fillMissingDates(data, startDate, endDate) {
       .format("YYYY-MM-DD");
   }
   return data;
+}
+
+export function areCookiesEnabled() {
+  // see: https://github.com/Modernizr/Modernizr/blob/400db4043c22af98d46e1d2b9cbc5cb062791192/feature-detects/cookies.js
+  try {
+    document.cookie = "cookietest=1";
+    var ret = document.cookie.indexOf("cookietest=") !== -1;
+    document.cookie = "cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+    return ret;
+  } catch (e) {
+    return false;
+  }
 }
 
 // This prevents a mini racer crash

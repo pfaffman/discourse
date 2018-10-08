@@ -190,7 +190,10 @@ describe UsersController do
         )
 
         expect(response.status).to eq(200)
-        expect(response.body).to include('{"is_developer":false,"admin":false,"second_factor_required":false,"backup_enabled":false}')
+        expect(response.body).to have_tag("div#data-preloaded") do |element|
+          json = JSON.parse(element.current_scope.attribute('data-preloaded').value)
+          expect(json['password_reset']).to include('{"is_developer":false,"admin":false,"second_factor_required":false,"backup_enabled":false}')
+        end
 
         expect(session["password-#{token}"]).to be_blank
         expect(UserAuthToken.where(id: user_auth_token.id).count).to eq(0)
@@ -255,7 +258,10 @@ describe UsersController do
 
           get "/u/password-reset/#{token}"
 
-          expect(response.body).to include('{"is_developer":false,"admin":false,"second_factor_required":true,"backup_enabled":false}')
+          expect(response.body).to have_tag("div#data-preloaded") do |element|
+            json = JSON.parse(element.current_scope.attribute('data-preloaded').value)
+            expect(json['password_reset']).to include('{"is_developer":false,"admin":false,"second_factor_required":true,"backup_enabled":false}')
+          end
 
           put "/u/password-reset/#{token}", params: {
             password: 'hg9ow8yHG32O',
@@ -1423,7 +1429,6 @@ describe UsersController do
 
           put "/u/#{user.username}.json", params: {
             name: 'Jim Tom',
-            custom_fields: { test: :it },
             muted_usernames: "#{user2.username},#{user3.username}",
             watched_tags: "#{tags[0].name},#{tags[1].name}"
           }
@@ -1433,14 +1438,14 @@ describe UsersController do
           user.reload
 
           expect(user.name).to eq 'Jim Tom'
-          expect(user.custom_fields['test']).to eq 'it'
+
           expect(user.muted_users.pluck(:username).sort).to eq [user2.username, user3.username].sort
           expect(TagUser.where(
             user: user,
             notification_level: TagUser.notification_levels[:watching]
           ).pluck(:tag_id)).to contain_exactly(tags[0].id, tags[1].id)
 
-          theme = Theme.create(name: "test", user_selectable: true, user_id: -1)
+          theme = Fabricate(:theme, user_selectable: true)
 
           put "/u/#{user.username}.json", params: {
             muted_usernames: "",
@@ -1515,6 +1520,46 @@ describe UsersController do
               expect(response.status).to eq(200)
               expect(user.user_fields[user_field.id.to_s]).to be_blank
             end
+          end
+
+          context "custom_field" do
+            before do
+              plugin = Plugin::Instance.new
+              plugin.register_editable_user_custom_field :test2
+            end
+
+            after do
+              User.plugin_editable_user_custom_fields.clear
+            end
+
+            it "only updates allowed user fields" do
+              put "/u/#{user.username}.json", params: { custom_fields: { test1: :hello1, test2: :hello2 } }
+
+              expect(response.status).to eq(200)
+              expect(user.custom_fields["test1"]).to be_blank
+              expect(user.custom_fields["test2"]).to eq("hello2")
+            end
+
+            it "works alongside a user field" do
+              user_field = Fabricate(:user_field, editable: true)
+              put "/u/#{user.username}.json", params: { custom_fields: { test1: :hello1, test2: :hello2 }, user_fields: { user_field.id.to_s => 'happy' } }
+              expect(response.status).to eq(200)
+              expect(user.custom_fields["test1"]).to be_blank
+              expect(user.custom_fields["test2"]).to eq("hello2")
+              expect(user.user_fields[user_field.id.to_s]).to eq('happy')
+            end
+
+            it "is secure when there are no registered editable fields" do
+              User.plugin_editable_user_custom_fields.clear
+              put "/u/#{user.username}.json", params: { custom_fields: { test1: :hello1, test2: :hello2 } }
+              expect(response.status).to eq(200)
+              expect(user.custom_fields["test1"]).to be_blank
+              expect(user.custom_fields["test2"]).to be_blank
+
+              put "/u/#{user.username}.json", params: { custom_fields: ["arrayitem1", "arrayitem2"] }
+              expect(response.status).to eq(200)
+            end
+
           end
         end
 
@@ -1725,9 +1770,13 @@ describe UsersController do
     end
 
     context 'while logged in' do
+      before do
+        sign_in(user)
+      end
 
-      let!(:user) { sign_in(Fabricate(:user)) }
-      let(:upload) { Fabricate(:upload) }
+      let(:upload) do
+        Fabricate(:upload, user: user)
+      end
 
       it "raises an error when you don't have permission to toggle the avatar" do
         another_user = Fabricate(:user)
@@ -1764,6 +1813,9 @@ describe UsersController do
       end
 
       it 'can successfully pick a gravatar' do
+
+        user.user_avatar.update_columns(gravatar_upload_id: upload.id)
+
         put "/u/#{user.username}/preferences/avatar/pick.json", params: {
           upload_id: upload.id, type: "gravatar"
         }
@@ -1771,6 +1823,16 @@ describe UsersController do
         expect(response.status).to eq(200)
         expect(user.reload.uploaded_avatar_id).to eq(upload.id)
         expect(user.user_avatar.reload.gravatar_upload_id).to eq(upload.id)
+      end
+
+      it 'can not pick uploads that were not created by user' do
+        upload2 = Fabricate(:upload)
+
+        put "/u/#{user.username}/preferences/avatar/pick.json", params: {
+          upload_id: upload2.id, type: "custom"
+        }
+
+        expect(response.status).to eq(403)
       end
 
       it 'can successfully pick a custom avatar' do
@@ -1965,7 +2027,7 @@ describe UsersController do
         json = JSON.parse(response.body)
         expect(json["email"]).to eq(user.email)
         expect(json["secondary_emails"]).to eq(user.secondary_emails)
-        expect(json["associated_accounts"]).to be_present
+        expect(json["associated_accounts"]).to eq([])
       end
 
       it "works on inactive users" do
@@ -1978,7 +2040,7 @@ describe UsersController do
         json = JSON.parse(response.body)
         expect(json["email"]).to eq(inactive_user.email)
         expect(json["secondary_emails"]).to eq(inactive_user.secondary_emails)
-        expect(json["associated_accounts"]).to be_present
+        expect(json["associated_accounts"]).to eq([])
       end
     end
   end
@@ -2223,7 +2285,7 @@ describe UsersController do
       end
 
       it "raises an error when logged in" do
-        moderator = sign_in(Fabricate(:moderator))
+        sign_in(Fabricate(:moderator))
         post_user
 
         put "/u/update-activation-email.json", params: {
@@ -2235,7 +2297,7 @@ describe UsersController do
 
       it "raises an error when the new email is taken" do
         active_user = Fabricate(:user)
-        user = post_user
+        post_user
 
         put "/u/update-activation-email.json", params: {
           email: active_user.email
@@ -2245,7 +2307,7 @@ describe UsersController do
       end
 
       it "raises an error when the email is blacklisted" do
-        user = post_user
+        post_user
         SiteSetting.email_domains_blacklist = 'example.com'
         put "/u/update-activation-email.json", params: { email: 'test@example.com' }
         expect(response.status).to eq(422)
@@ -2532,6 +2594,18 @@ describe UsersController do
       expect(response).to redirect_to("/")
     end
 
+    context 'when cookies contains a destination URL' do
+      it 'should redirect to the URL' do
+        sign_in(Fabricate(:user))
+        destination_url = 'http://thisisasite.com/somepath'
+        cookies[:destination_url] = destination_url
+
+        get "/u/account-created"
+
+        expect(response).to redirect_to(destination_url)
+      end
+    end
+
     context "when the user account is created" do
       include ApplicationHelper
 
@@ -2541,9 +2615,12 @@ describe UsersController do
 
         expect(response.status).to eq(200)
 
-        expect(response.body).to include(
-          "{\"message\":\"#{I18n.t("login.activate_email", email: user.email).gsub!("</", "<\\/")}\",\"show_controls\":true,\"username\":\"#{user.username}\",\"email\":\"#{user.email}\"}"
-        )
+        expect(response.body).to have_tag("div#data-preloaded") do |element|
+          json = JSON.parse(element.current_scope.attribute('data-preloaded').value)
+          expect(json['accountCreated']).to include(
+            "{\"message\":\"#{I18n.t("login.activate_email", email: user.email).gsub!("</", "<\\/")}\",\"show_controls\":true,\"username\":\"#{user.username}\",\"email\":\"#{user.email}\"}"
+          )
+        end
       end
     end
   end
@@ -3067,5 +3144,116 @@ describe UsersController do
         end
       end
     end
+  end
+
+  describe '#revoke_account' do
+    let(:other_user) { Fabricate(:user) }
+    it 'errors for unauthorised users' do
+      post "/u/#{user.username}/preferences/revoke-account.json", params: {
+        provider_name: 'facebook'
+      }
+      expect(response.status).to eq(403)
+
+      sign_in(other_user)
+
+      post "/u/#{user.username}/preferences/revoke-account.json", params: {
+        provider_name: 'facebook'
+      }
+      expect(response.status).to eq(403)
+    end
+
+    context 'while logged in' do
+      before do
+        sign_in(user)
+      end
+
+      it 'returns an error when there is no matching account' do
+        post "/u/#{user.username}/preferences/revoke-account.json", params: {
+          provider_name: 'facebook'
+        }
+        expect(response.status).to eq(404)
+      end
+
+      context "with fake provider" do
+        let(:authenticator) do
+          Class.new(Auth::Authenticator) do
+            attr_accessor :can_revoke
+            def name
+              "testprovider"
+            end
+
+            def enabled?
+              true
+            end
+
+            def description_for_user(user)
+              "an account"
+            end
+
+            def can_revoke?
+              can_revoke
+            end
+
+            def revoke(user, skip_remote: false)
+              true
+            end
+          end.new
+        end
+
+        before do
+          DiscoursePluginRegistry.register_auth_provider(Auth::AuthProvider.new(authenticator: authenticator))
+        end
+
+        after do
+          DiscoursePluginRegistry.reset!
+        end
+
+        it 'returns an error when revoking is not allowed' do
+          authenticator.can_revoke = false
+
+          post "/u/#{user.username}/preferences/revoke-account.json", params: {
+            provider_name: 'testprovider'
+          }
+          expect(response.status).to eq(404)
+
+          authenticator.can_revoke = true
+          post "/u/#{user.username}/preferences/revoke-account.json", params: {
+            provider_name: 'testprovider'
+          }
+          expect(response.status).to eq(200)
+        end
+
+        it 'works' do
+          authenticator.can_revoke = true
+
+          post "/u/#{user.username}/preferences/revoke-account.json", params: {
+            provider_name: 'testprovider'
+          }
+          expect(response.status).to eq(200)
+        end
+      end
+
+    end
+
+  end
+
+  describe '#revoke_auth_token' do
+
+    context 'while logged in' do
+      before do
+        sign_in(user)
+      end
+
+      it 'logs user out' do
+        expect(user.user_auth_tokens.count).to eq(1)
+
+        post "/u/#{user.username}/preferences/revoke-auth-token.json"
+
+        expect(response.status).to eq(200)
+        expect(user.user_auth_tokens.count).to eq(0)
+      end
+
+    end
+
   end
 end

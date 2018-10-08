@@ -6,7 +6,7 @@ function addLocalDate(buffer, matches, state) {
   let config = {
     date: null,
     time: null,
-    format: "YYYY-MM-DD HH:mm",
+    format: "YYYY-MM-DD HH:mm:ss",
     timezones: ""
   };
 
@@ -18,6 +18,7 @@ function addLocalDate(buffer, matches, state) {
 
   config.date = parsed.attrs.date;
   config.time = parsed.attrs.time;
+  config.forceTimezone = parsed.attrs.forceTimezone;
   config.recurring = parsed.attrs.recurring;
   config.format = parsed.attrs.format || config.format;
   config.timezones = parsed.attrs.timezones || config.timezones;
@@ -25,13 +26,24 @@ function addLocalDate(buffer, matches, state) {
   token = new state.Token("span_open", "span", 1);
   token.attrs = [
     ["class", "discourse-local-date"],
-    ["data-date", config.date],
-    ["data-time", config.time],
-    ["data-format", config.format],
-    ["data-timezones", config.timezones]
+    ["data-date", state.md.utils.escapeHtml(config.date)],
+    ["data-time", state.md.utils.escapeHtml(config.time)],
+    ["data-format", state.md.utils.escapeHtml(config.format)],
+    ["data-timezones", state.md.utils.escapeHtml(config.timezones)]
   ];
+
+  if (config.forceTimezone) {
+    token.attrs.push([
+      "data-force-timezone",
+      state.md.utils.escapeHtml(config.forceTimezone)
+    ]);
+  }
+
   if (config.recurring) {
-    token.attrs.push(["data-recurring", config.recurring]);
+    token.attrs.push([
+      "data-recurring",
+      state.md.utils.escapeHtml(config.recurring)
+    ]);
   }
   buffer.push(token);
 
@@ -40,7 +52,7 @@ function addLocalDate(buffer, matches, state) {
     .filter(t => t)
     .map(timezone => {
       const dateTime = moment
-        .utc(`${config.date} ${config.time}`, "YYYY-MM-DD HH:mm")
+        .utc(`${config.date} ${config.time}`, "YYYY-MM-DD HH:mm:ss")
         .tz(timezone)
         .format(config.format);
 

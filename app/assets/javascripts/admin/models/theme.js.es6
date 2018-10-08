@@ -1,10 +1,18 @@
 import RestModel from "discourse/models/rest";
 import { default as computed } from "ember-addons/ember-computed-decorators";
+import { popupAjaxError } from "discourse/lib/ajax-error";
 
 const THEME_UPLOAD_VAR = 2;
 
+export const THEMES = "themes";
+export const COMPONENTS = "components";
+const SETTINGS_TYPE_ID = 5;
+
 const Theme = RestModel.extend({
   FIELDS_IDS: [0, 1],
+  isActive: Em.computed.or("default", "user_selectable"),
+  isPendingUpdates: Em.computed.gt("remote_theme.commits_behind", 0),
+  hasEditedFields: Em.computed.gt("editedFields.length", 0),
 
   @computed("theme_fields")
   themeFields(fields) {
@@ -30,6 +38,27 @@ const Theme = RestModel.extend({
     return fields.filter(
       f => f.target === "common" && f.type_id === THEME_UPLOAD_VAR
     );
+  },
+
+  @computed("theme_fields", "theme_fields.@each.error")
+  isBroken(fields) {
+    return (
+      fields && fields.some(field => field.error && field.error.length > 0)
+    );
+  },
+
+  @computed("theme_fields.@each")
+  editedFields(fields) {
+    return fields.filter(
+      field => !Em.isBlank(field.value) && field.type_id !== SETTINGS_TYPE_ID
+    );
+  },
+
+  @computed("remote_theme.last_error_text")
+  remoteError(errorText) {
+    if (errorText && errorText.length > 0) {
+      return errorText;
+    }
   },
 
   getKey(field) {
@@ -150,7 +179,9 @@ const Theme = RestModel.extend({
 
   saveChanges() {
     const hash = this.getProperties.apply(this, arguments);
-    return this.save(hash).then(() => this.set("changed", false));
+    return this.save(hash)
+      .finally(() => this.set("changed", false))
+      .catch(popupAjaxError);
   },
 
   saveSettings(name, value) {

@@ -19,6 +19,7 @@
       box-sizing: border-box;
       display: flex;
       align-self: stretch;
+      align-items: center;
       margin: 0 3px 10px 3px;
       order: 10; // always last for consistent placement
     }
@@ -89,8 +90,8 @@
     }
     > li {
       margin-right: 0;
-      background: $primary-low;
       font-size: $font-down-1;
+      border: 1px solid $primary-medium;
     }
     > li > a {
       line-height: $line-height-large;
@@ -150,10 +151,11 @@
   .badge-notification,
   .category-topic-link td.num .badge-notification {
     position: relative;
-    display: inline;
+    display: inline-block;
     top: -1px;
-    font-size: $font-down-1;
-    padding: 4px 6px 3px 6px;
+    font-size: $font-0;
+    line-height: $line-height-small;
+    padding: 0.15em 0.4em 0.2em 0.4em;
     i {
       color: $secondary;
     }
@@ -481,7 +483,7 @@ button.dismiss-read {
 // base defines extra padding for easier click/top of title field
 // this is a bit too much for mobile
 td .main-link {
-  width: 80%;
+  width: 78%;
   display: inline-block;
   a.title {
     padding: 5px 10px 5px 0;

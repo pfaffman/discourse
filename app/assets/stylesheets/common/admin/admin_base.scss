@@ -24,7 +24,7 @@ $mobile-breakpoint: 700px;
     padding: 0 0 0 10px;
   }
 
-  .nav.nav-pills {
+  .nav-pills {
     display: inline-flex;
     width: calc(100% - 10px);
     flex: 1 0 auto;
@@ -498,7 +498,7 @@ $mobile-breakpoint: 700px;
       content: "";
       position: absolute;
       right: 0px;
-      width: 30px;
+      width: 15px;
       height: calc(100% - 5px);
       background: linear-gradient(
         to right,
@@ -508,7 +508,7 @@ $mobile-breakpoint: 700px;
     }
   }
 
-  .nav.nav-pills {
+  .nav-pills {
     width: calc(100% - 10px);
     display: inline-flex;
     padding: 10px;
@@ -550,8 +550,12 @@ $mobile-breakpoint: 700px;
     @include breakpoint(mobile) {
       margin: 0 -10px;
     }
+    label {
+      margin-bottom: 0;
+    }
     input {
-      margin: 0;
+      margin-right: 5px;
+      margin-bottom: 0;
       @include breakpoint(tablet) {
         max-width: 150px;
       }
@@ -614,8 +618,6 @@ $mobile-breakpoint: 700px;
     }
   }
   .toggle {
-    margin-top: 8px;
-    float: right;
     span {
       font-weight: bold;
     }
@@ -623,14 +625,6 @@ $mobile-breakpoint: 700px;
   label {
     display: inline-block;
     margin-right: 5px;
-  }
-  #last-seen input[type="text"] {
-    float: none;
-  }
-  .ac-wrap {
-    display: inline-block;
-    vertical-align: middle;
-    padding: 0;
   }
   .pull-right {
     padding-right: 10px;
@@ -873,25 +867,43 @@ table#user-badges {
 
 .value-list {
   .value {
-    border-bottom: 1px solid #ddd;
-    padding: 3px;
-    margin-right: 10px;
+    padding: 0.125em 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor: move;
+    display: flex;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .value-input {
+      box-sizing: border-box;
+      flex: 1;
+      border-color: $primary-low;
+      cursor: pointer;
+      margin: 0;
+
+      &:focus {
+        border-color: $tertiary;
+        box-shadow: none;
+      }
+    }
+
+    .remove-value-btn {
+      margin-right: 0.25em;
+      width: 29px;
+      border: 1px solid $primary-low;
+      outline: none;
+      padding: 0;
+
+      &:focus {
+        border-color: $tertiary;
+      }
+    }
   }
   .values {
-    margin-bottom: 10px;
-  }
-  .placeholder {
-    border-bottom: 1px solid #ddd;
-    padding: 3px;
-    margin-right: 10px;
-    height: 30px;
-  }
-  input[type="text"] {
-    width: 90%;
+    margin-bottom: 0.5em;
   }
 }
 
@@ -932,4 +944,9 @@ table#user-badges {
 @import "common/admin/backups";
 @import "common/admin/plugins";
 @import "common/admin/admin_reports";
+@import "common/admin/admin_report";
+@import "common/admin/admin_report_counters";
+@import "common/admin/admin_report_chart";
+@import "common/admin/admin_report_table";
+@import "common/admin/admin_report_inline_table";
 @import "common/admin/dashboard_previous";

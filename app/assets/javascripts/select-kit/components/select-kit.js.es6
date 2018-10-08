@@ -50,7 +50,6 @@ export default Ember.Component.extend(
     filterable: false,
     filter: "",
     previousFilter: "",
-    filterPlaceholder: "select_kit.filter_placeholder",
     filterIcon: "search",
     headerIcon: null,
     rowComponent: "select-kit/select-kit-row",
@@ -82,26 +81,24 @@ export default Ember.Component.extend(
     minimum: null,
     minimumLabel: null,
     maximumLabel: null,
+    forceEscape: false,
 
     init() {
       this._super();
 
       this.noneValue = "__none__";
-      this.set("headerComponentOptions", Ember.Object.create());
-      this.set("rowComponentOptions", Ember.Object.create());
+      this.set(
+        "headerComponentOptions",
+        Ember.Object.create({ forceEscape: this.get("forceEscape") })
+      );
+      this.set(
+        "rowComponentOptions",
+        Ember.Object.create({
+          forceEscape: this.get("forceEscape")
+        })
+      );
       this.set("computedContent", []);
       this.set("highlightedSelection", []);
-
-      if (this.site && this.site.isMobileDevice) {
-        this.setProperties({
-          filterable: isNone(this.get("filterable"))
-            ? false
-            : this.get("filterable"),
-          autoFilterable: isNone(this.get("autoFilterable"))
-            ? false
-            : this.get("filterable")
-        });
-      }
 
       if (this.get("nameChanges")) {
         this.addObserver(
@@ -162,9 +159,14 @@ export default Ember.Component.extend(
         this
       );
 
-      const existingCreatedComputedContent = this.get(
-        "computedContent"
-      ).filterBy("created", true);
+      let existingCreatedComputedContent = [];
+      if (!this.get("allowContentReplacement")) {
+        existingCreatedComputedContent = this.get("computedContent").filterBy(
+          "created",
+          true
+        );
+      }
+
       this.setProperties({
         computedContent: content
           .map(c => this.computeContentItem(c))
@@ -241,8 +243,8 @@ export default Ember.Component.extend(
       }
     },
 
-    validateCreate() {
-      return !this.get("hasReachedMaximum");
+    validateCreate(created) {
+      return !this.get("hasReachedMaximum") && created.length > 0;
     },
 
     validateSelect() {
@@ -263,10 +265,10 @@ export default Ember.Component.extend(
       return selection.length >= minimum;
     },
 
-    @computed("shouldFilter", "allowAny", "filter")
-    shouldDisplayFilter(shouldFilter, allowAny, filter) {
+    @computed("shouldFilter", "allowAny")
+    shouldDisplayFilter(shouldFilter, allowAny) {
       if (shouldFilter) return true;
-      if (allowAny && filter.length > 0) return true;
+      if (allowAny) return true;
       return false;
     },
 
@@ -296,6 +298,13 @@ export default Ember.Component.extend(
       }
     },
 
+    @computed("allowAny")
+    filterPlaceholder(allowAny) {
+      return allowAny
+        ? "select_kit.filter_placeholder_with_any"
+        : "select_kit.filter_placeholder";
+    },
+
     @computed("filter", "filterable", "autoFilterable", "renderedFilterOnce")
     shouldFilter(filter, filterable, autoFilterable, renderedFilterOnce) {
       if (renderedFilterOnce && filterable) return true;
@@ -321,12 +330,7 @@ export default Ember.Component.extend(
       if (isLoading || hasReachedMaximum) return false;
       if (collectionComputedContent.map(c => c.value).includes(filter))
         return false;
-      if (
-        this.get("allowAny") &&
-        filter.length > 0 &&
-        this.validateCreate(filter)
-      )
-        return true;
+      if (this.get("allowAny") && this.validateCreate(filter)) return true;
       return false;
     },
 
@@ -447,7 +451,7 @@ export default Ember.Component.extend(
       if (get(this.actions, actionName)) {
         run.next(() => this.send(actionName, ...params));
       } else if (this.get(actionName)) {
-        run.next(() => this.get(actionName)());
+        run.next(() => this.get(actionName)(...params));
       }
     },
 
@@ -458,7 +462,7 @@ export default Ember.Component.extend(
 
     clearSelection() {
       this.deselect(this.get("selection"));
-      this.focus();
+      this.focusFilterOrHeader();
     },
 
     actions: {

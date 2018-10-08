@@ -55,6 +55,13 @@ describe UserDestroyer do
           UserDestroyer.new(@admin).destroy(@user, destroy_opts.merge(quiet: true))
         }.to_not change { UserHistory.where(action: UserHistory.actions[:delete_user]).count }
       end
+
+      it 'triggers a extensibility event' do
+        event = DiscourseEvent.track_events { destroy }.last
+
+        expect(event[:event_name]).to eq(:user_destroyed)
+        expect(event[:params].first).to eq(@user)
+      end
     end
 
     shared_examples "email block list" do
@@ -351,6 +358,28 @@ describe UserDestroyer do
         expect {
           d.destroy(user)
         }.to change { User.count }.by(-1)
+      end
+    end
+
+    context 'user has staff action logs' do
+      before do
+        logger = StaffActionLogger.new(user)
+        logger.log_site_setting_change(
+          'site_description',
+          'Our friendly community',
+          'My favourite community'
+        )
+      end
+
+      it "should keep the staff action log and add the username" do
+        username = user.username
+        log = UserHistory.staff_action_records(
+          Discourse.system_user,
+          acting_user: username
+        ).to_a[0]
+        UserDestroyer.new(admin).destroy(user, delete_posts: true)
+        log.reload
+        expect(log.details).to include(username)
       end
     end
   end
