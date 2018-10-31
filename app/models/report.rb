@@ -188,7 +188,7 @@ class Report
       # given reports can be added by plugins we don’t want dashboard failures
       # on report computation, however we do want to log which report is provoking
       # an error
-      Rails.logger.error("Error while computing report `#{report.type}`: #{e.message}")
+      Rails.logger.error("Error while computing report `#{report.type}`: #{e.message}\n#{e.backtrace.join("\n")}")
     end
 
     report
@@ -1167,6 +1167,145 @@ class Report
       revision[:post_number] = r.post_number
 
       report.data << revision
+    end
+  end
+
+  def self.report_most_disagreed_flaggers(report)
+    report.data = []
+
+    report.modes = [:table]
+
+    report.labels = [
+      {
+        type: :user,
+        properties: {
+          username: :username,
+          id: :user_id,
+          avatar: :avatar_template,
+        },
+        title: I18n.t("reports.most_disagreed_flaggers.labels.user")
+      },
+      {
+        type: :number,
+        property: :disagreed_flags,
+        title: I18n.t("reports.most_disagreed_flaggers.labels.disagreed_flags")
+      },
+      {
+        type: :number,
+        property: :agreed_flags,
+        title: I18n.t("reports.most_disagreed_flaggers.labels.agreed_flags")
+      },
+      {
+        type: :number,
+        property: :score,
+        title: I18n.t("reports.most_disagreed_flaggers.labels.score")
+      },
+    ]
+
+    sql = <<~SQL
+      SELECT u.id,
+             u.username,
+             u.uploaded_avatar_id as avatar_id,
+             CASE WHEN u.silenced_till IS NOT NULL THEN 't' ELSE 'f' END as silenced,
+             SUM(CASE WHEN pa.disagreed_at IS NOT NULL THEN 1 ELSE 0 END) as disagreed_flags,
+             SUM(CASE WHEN pa.agreed_at IS NOT NULL THEN 1 ELSE 0 END) as agreed_flags,
+             ROUND(SUM(CASE WHEN pa.agreed_at IS NOT NULL THEN 1 ELSE 0 END)::numeric / SUM(CASE WHEN pa.disagreed_at IS NOT NULL THEN 1 ELSE 0 END)::numeric, 2) as ratio,
+             SUM(CASE WHEN pa.disagreed_at IS NOT NULL THEN 1 ELSE 0 END) - SUM(CASE WHEN pa.agreed_at IS NOT NULL THEN 1 ELSE 0 END) spread,
+             ROUND((1-(SUM(CASE WHEN pa.agreed_at IS NOT NULL THEN 1 ELSE 0 END)::numeric / SUM(CASE WHEN pa.disagreed_at IS NOT NULL THEN 1 ELSE 0 END)::numeric)) *
+               (SUM(CASE WHEN pa.disagreed_at IS NOT NULL THEN 1 ELSE 0 END) - SUM(CASE WHEN pa.agreed_at IS NOT NULL THEN 1 ELSE 0 END)), 2) as score
+      FROM post_actions AS pa
+      INNER JOIN users AS u ON u.id = pa.user_id
+      WHERE pa.post_action_type_id IN (#{PostActionType.flag_types.values.join(', ')})
+        AND pa.user_id <> -1
+      GROUP BY u.id, u.username, u.silenced_till
+      HAVING SUM(CASE WHEN pa.disagreed_at IS NOT NULL THEN 1 ELSE 0 END) > SUM(CASE WHEN pa.agreed_at IS NOT NULL THEN 1 ELSE 0 END)
+      ORDER BY score DESC
+      LIMIT 20
+      SQL
+
+    DB.query(sql).each do |row|
+      flagger = {}
+      flagger[:user_id] = row.id
+      flagger[:username] = row.username
+      flagger[:avatar_template] = User.avatar_template(row.username, row.avatar_id)
+      flagger[:disagreed_flags] = row.disagreed_flags
+      flagger[:agreed_flags] = row.agreed_flags
+      flagger[:score] = row.score
+
+      report.data << flagger
+    end
+  end
+
+  def self.report_suspicious_logins(report)
+    report.modes = [:table]
+
+    report.labels = [
+      {
+        type: :user,
+        properties: {
+          username: :username,
+          id: :user_id,
+          avatar: :avatar_template,
+        },
+        title: I18n.t("reports.suspicious_logins.labels.user")
+      },
+      {
+        property: :client_ip,
+        title: I18n.t("reports.suspicious_logins.labels.client_ip")
+      },
+      {
+        property: :location,
+        title: I18n.t("reports.suspicious_logins.labels.location")
+      },
+      {
+        property: :browser,
+        title: I18n.t("reports.suspicious_logins.labels.browser")
+      },
+      {
+        property: :device,
+        title: I18n.t("reports.suspicious_logins.labels.device")
+      },
+      {
+        property: :os,
+        title: I18n.t("reports.suspicious_logins.labels.os")
+      },
+      {
+        type: :date,
+        property: :login_time,
+        title: I18n.t("reports.suspicious_logins.labels.login_time")
+      },
+    ]
+
+    report.data = []
+
+    sql = <<~SQL
+      SELECT u.id user_id, u.username, u.uploaded_avatar_id, t.client_ip, t.user_agent, t.created_at login_time
+      FROM user_auth_token_logs t
+      JOIN users u ON u.id = t.user_id
+      WHERE t.action = 'suspicious'
+        AND t.created_at >= :start_date
+        AND t.created_at <= :end_date
+    SQL
+
+    DB.query(sql, start_date: report.start_date, end_date: report.end_date).each do |row|
+      data = {}
+
+      ipinfo = DiscourseIpInfo.get(row.client_ip)
+      browser = BrowserDetection.browser(row.user_agent)
+      device = BrowserDetection.device(row.user_agent)
+      os = BrowserDetection.os(row.user_agent)
+
+      data[:username] = row.username
+      data[:user_id] = row.user_id
+      data[:avatar_template] = User.avatar_template(row.username, row.uploaded_avatar_id)
+      data[:client_ip] = row.client_ip.to_s
+      data[:location] = ipinfo[:location]
+      data[:browser] = I18n.t("user_auth_tokens.browser.#{browser}")
+      data[:device] = I18n.t("user_auth_tokens.device.#{device}")
+      data[:os] = I18n.t("user_auth_tokens.os.#{os}")
+      data[:login_time] = row.login_time
+
+      report.data << data
     end
   end
 

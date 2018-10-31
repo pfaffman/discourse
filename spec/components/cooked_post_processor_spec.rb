@@ -58,10 +58,10 @@ describe CookedPostProcessor do
     end
 
     context "responsive images" do
+
+      before { SiteSetting.responsive_post_image_sizes = "1|1.5|3" }
+
       it "includes responsive images on demand" do
-
-        SiteSetting.responsive_post_image_sizes = "1|1.5|3"
-
         upload = Fabricate(:upload, width: 2000, height: 1500, filesize: 10000)
         post = Fabricate(:post, raw: "hello <img src='#{upload.url}'>")
 
@@ -93,8 +93,29 @@ describe CookedPostProcessor do
         cpp.post_process_images
 
         # 1.5x is skipped cause we have a missing thumb
-        expect(cpp.html).to include('srcset="http://a.b.c/666x500.jpg, http://a.b.c/1998x1500.jpg 3.0x"')
+        expect(cpp.html).to include('srcset="http://a.b.c/666x500.jpg, http://a.b.c/1998x1500.jpg 3x"')
+      end
 
+      it "doesn't include response images for cropped images" do
+        upload = Fabricate(:upload, width: 200, height: 4000, filesize: 12345)
+        post = Fabricate(:post, raw: "hello <img src='#{upload.url}'>")
+
+        # fake some optimized images
+        OptimizedImage.create!(
+          url: 'http://a.b.c/200x500.jpg',
+          width: 200,
+          height: 500,
+          upload_id: upload.id,
+          sha1: SecureRandom.hex,
+          extension: '.jpg',
+          filesize: 500
+        )
+
+        cpp = CookedPostProcessor.new(post)
+        cpp.add_to_size_cache(upload.url, 200, 4000)
+        cpp.post_process_images
+
+        expect(cpp.html).to_not include('srcset="')
       end
     end
 
@@ -176,6 +197,22 @@ describe CookedPostProcessor do
 <span class=\"filename\">logo.png</span><span class=\"informations\">1750x2000 1.21 KB</span><span class=\"expand\"></span>
 </div></a></div></p>"
         expect(cpp).to be_dirty
+      end
+
+      describe 'when image is inside onebox' do
+        let(:url) { 'https://image.com/my-avatar' }
+        let(:post) { Fabricate(:post, raw: url) }
+
+        before do
+          Oneboxer.stubs(:onebox).with(url, anything).returns("<img class='onebox' src='/uploads/default/original/1X/1234567890123456.jpg' />")
+        end
+
+        it 'should not add lightbox' do
+          cpp.post_process_oneboxes
+          cpp.post_process_images
+
+          expect(cpp.html).to match_html("<p><img class=\"onebox\" src=\"/uploads/default/original/1X/1234567890123456.jpg\" width=\"690\"\ height=\"788\"></p>")
+        end
       end
 
       describe 'when image is an svg' do

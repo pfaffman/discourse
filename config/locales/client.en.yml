@@ -37,31 +37,31 @@ en:
         thousands: "{{number}}k"
         millions: "{{number}}M"
     dates:
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       time: "h:mm a"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       timeline_date: "MMM YYYY"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_no_year: "MMM D h:mm a"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_no_year_no_time: "MMM D"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       full_no_year_no_time: "MMMM Do"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_with_year: "MMM D, YYYY h:mm a"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_with_year_no_time: "MMM D, YYYY"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       full_with_year_no_time: "MMMM Do, YYYY"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_date_with_year: "MMM D, 'YY LT"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_date_without_year: "MMM D, LT"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_date_with_year_without_time: "MMM D, 'YY"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_date_without_year_with_linebreak: "MMM D <br/>LT"
-      # Use Moment.js format string: http://momentjs.com/docs/#/displaying/format/
+      # Use Moment.js format string: https://momentjs.com/docs/#/displaying/format/
       long_date_with_year_with_linebreak: "MMM D, 'YY <br/>LT"
 
       wrap_ago: "%{date} ago"
@@ -282,10 +282,8 @@ en:
         unbookmark: "Click to remove all bookmarks in this topic"
 
     bookmarks:
-      not_logged_in: "sorry, you must be logged in to bookmark posts"
       created: "you've bookmarked this post"
       not_bookmarked: "bookmark this post"
-      last_read: "this is the last post you've read; click to bookmark it"
       remove: "Remove Bookmark"
       confirm_clear: "Are you sure you want to clear all your bookmarks from this topic?"
 
@@ -599,7 +597,7 @@ en:
       topics_entered: "topics entered"
       post_count: "# posts"
       confirm_delete_other_accounts: "Are you sure you want to delete these accounts?"
-      powered_by: "powered by <a href='https://ipinfo.io'>ipinfo.io</a>"
+      powered_by: "using <a href='https://maxmind.com'>MaxMindDB</a>"
       copied: "copied"
 
     user_fields:
@@ -620,6 +618,7 @@ en:
       private_messages: "Messages"
       activity_stream: "Activity"
       preferences: "Preferences"
+      profile_hidden: "This user's public profile is hidden."
       expand_profile: "Expand"
       collapse_profile: "Collapse"
       bookmarks: "Bookmarks"
@@ -689,7 +688,7 @@ en:
       watched_first_post_tags_instructions: "You will be notified of the first post in each new topic with these tags."
 
       muted_categories: "Muted"
-      muted_categories_instructions: "You will not be notified of anything about new topics in these categories, and they will not appear in latest."
+      muted_categories_instructions: "You will not be notified of anything about new topics in these categories, and they will not appear on the categories or latest pages."
       no_category_access: "As a moderator you have limited category access, save is disabled."
       delete_account: "Delete My Account"
       delete_account_confirm: "Are you sure you want to permanently delete your account? This action cannot be undone!"
@@ -769,15 +768,16 @@ en:
       second_factor:
         title: "Two Factor Authentication"
         disable: "Disable two factor authentication"
-        enable: "Enable <a href>two factor authentication</a> for enhanced account security"
+        enable: "Enable two factor authentication for enhanced account security"
         confirm_password_description: "Please confirm your password to continue"
         label: "Code"
+        rate_limit: "Please wait before trying another authentication code."
         enable_description: |
-          Scan this QR code in a supported app (<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a> – <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iOS</a> – <a href="https://www.microsoft.com/en-us/store/p/authenticator/9wzdncrfj3rj" target='_blank'>Windows Phone</a>) and enter your authentication code.
+          Scan this QR code in a supported app (<a href="https://www.google.com/search?q=authenticator+apps+for+android" target="_blank">Android</a> – <a href="https://www.google.com/search?q=authenticator+apps+for+ios" target="_blank">iOS</a> and enter your authentication code.
         disable_description: "Please enter the authentication code from your app"
         show_key_description: "Enter manually"
         extended_description: |
-          Two factor authentication adds extra security to your account by requiring a one-time token in addition to your password. Tokens can be generated on <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target='_blank'>Android</a>, <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>, and <a href="https://www.microsoft.com/en-us/store/p/authenticator/9wzdncrfj3rj" target='_blank'>Windows Phone</a> devices.
+          Two factor authentication adds extra security to your account by requiring a one-time token in addition to your password. Tokens can be generated on <a href="https://www.google.com/search?q=authenticator+apps+for+android" target='_blank'>Android</a> and <a href="https://www.google.com/search?q=authenticator+apps+for+ios">iOS</a> devices.
         oauth_enabled_warning: "Please note that social logins will be disabled once two factor authentication has been enabled on your account."
 
       change_about:
@@ -801,7 +801,7 @@ en:
         title: "Change your profile picture"
         gravatar: "<a href='//gravatar.com/emails' target='_blank'>Gravatar</a>, based on"
         gravatar_title: "Change your avatar on Gravatar's website"
-        gravatar_failed: "Could not fetch the Gravatar. Is there one associated to that email address?"
+        gravatar_failed: "We could not find a Gravatar with that email address."
         refresh_gravatar_title: "Refresh your Gravatar"
         letter_based: "System assigned profile picture"
         uploaded_avatar: "Custom picture"
@@ -867,16 +867,18 @@ en:
 
       auth_tokens:
         title: "Recently Used Devices"
-        title_logs: "Authentication Logs"
-        ip_address: "IP Address"
-        created: "Created"
-        first_seen: "First Seen"
-        last_seen: "Last Seen"
-        operating_system: "Operating System"
-        location: "Location"
-        action: "Action"
-        login: "Log in"
-        logout: "Log out everywhere"
+        ip: "IP"
+        details: "Details"
+        log_out_all: "Log out all"
+        active: "active now"
+        not_you: "Not you?"
+        show_all: "Show all ({{count}})"
+        show_few: "Show fewer"
+        was_this_you: "Was this you?"
+        was_this_you_description: "If it wasn’t you, we recommend you change your password and log out everywhere."
+        browser_and_device: "{{browser}} on {{device}}"
+        secure_account: "Secure my Account"
+        latest_post: "You last posted…"
 
       last_posted: "Last Post"
       last_emailed: "Last Emailed"
@@ -887,6 +889,7 @@ en:
 
       website: "Web Site"
       email_settings: "Email"
+      hide_profile_and_presence: "Hide my public profile and presence features"
       like_notification_frequency:
         title: "Notify when liked"
         always: "Always"
@@ -899,7 +902,7 @@ en:
         always: "always"
         never: "never"
       email_digests:
-        title: "When I don't visit here, send me an email summary of popular topics and replies"
+        title: "When I don’t visit here, send me an email summary of popular topics and replies"
         every_30_minutes: "every 30 minutes"
         every_hour: "hourly"
         daily: "daily"
@@ -1086,9 +1089,9 @@ en:
       enabled: "This site is in read only mode. Please continue to browse, but replying, likes, and other actions are disabled for now."
       login_disabled: "Login is disabled while the site is in read only mode."
       logout_disabled: "Logout is disabled while the site is in read only mode."
-    too_few_topics_and_posts_notice: "Let's <a href='http://blog.discourse.org/2014/08/building-a-discourse-community/'>get this discussion started!</a> There are currently <strong>%{currentTopics} / %{requiredTopics}</strong> topics and <strong>%{currentPosts} / %{requiredPosts}</strong> posts. New visitors need some conversations to read and respond to."
-    too_few_topics_notice: "Let's <a href='http://blog.discourse.org/2014/08/building-a-discourse-community/'>get this discussion started!</a> There are currently <strong>%{currentTopics} / %{requiredTopics}</strong> topics. New visitors need some conversations to read and respond to."
-    too_few_posts_notice: "Let's <a href='http://blog.discourse.org/2014/08/building-a-discourse-community/'>get this discussion started!</a> There are currently <strong>%{currentPosts} / %{requiredPosts}</strong> posts. New visitors need some conversations to read and respond to."
+    too_few_topics_and_posts_notice: "Let's <a href='https://blog.discourse.org/2014/08/building-a-discourse-community/'>get this discussion started!</a> There are currently <strong>%{currentTopics} / %{requiredTopics}</strong> topics and <strong>%{currentPosts} / %{requiredPosts}</strong> posts. New visitors need some conversations to read and respond to."
+    too_few_topics_notice: "Let's <a href='https://blog.discourse.org/2014/08/building-a-discourse-community/'>get this discussion started!</a> There are currently <strong>%{currentTopics} / %{requiredTopics}</strong> topics. New visitors need some conversations to read and respond to."
+    too_few_posts_notice: "Let's <a href='https://blog.discourse.org/2014/08/building-a-discourse-community/'>get this discussion started!</a> There are currently <strong>%{currentPosts} / %{requiredPosts}</strong> posts. New visitors need some conversations to read and respond to."
     logs_error_rate_notice:
       reached: "<b>%{relativeAge}</b> – <a href='%{url}' target='_blank'>%{rate}</a> reached site setting limit of %{siteSettingRate}."
       exceeded: "<b>%{relativeAge}</b> – <a href='%{url}' target='_blank'>%{rate}</a> exceeds site setting limit of %{siteSettingRate}."
@@ -1282,6 +1285,8 @@ en:
       categories_with_featured_topics: "Categories with Featured Topics"
       categories_and_latest_topics: "Categories and Latest Topics"
       categories_and_top_topics: "Categories and Top Topics"
+      categories_boxes: "Boxes with Subcategories"
+      categories_boxes_with_topics: "Boxes with Featured Topics"
 
     shortcut_modifier_key:
       shift: 'Shift'
@@ -1368,6 +1373,7 @@ en:
         tags_missing: "You must choose at least {{count}} tags"
 
       save_edit: "Save Edit"
+      overwrite_edit: "Overwrite Edit"
       reply_original: "Reply on Original Topic"
       reply_here: "Reply Here"
       reply: "Reply"
@@ -1408,7 +1414,7 @@ en:
       link_description: "enter link description here"
       link_dialog_title: "Insert Hyperlink"
       link_optional_text: "optional title"
-      link_url_placeholder: "http://example.com"
+      link_url_placeholder: "https://example.com"
       quote_title: "Blockquote"
       quote_text: "Blockquote"
       code_title: "Preformatted text"
@@ -1423,6 +1429,8 @@ en:
       help: "Markdown Editing Help"
       collapse: "minimize the composer panel"
       abandon: "close composer and discard draft"
+      enter_fullscreen: "enter fullscreen composer"
+      exit_fullscreen: "exit fullscreen composer"
       modal_ok: "OK"
       modal_cancel: "Cancel"
       cant_send_pm: "Sorry, you can't send a message to %{username}."
@@ -2085,7 +2093,7 @@ en:
         upload: "Sorry, there was an error uploading that file. Please try again."
         file_too_large: "Sorry, that file is too big (maximum size is {{max_size_kb}}kb). Why not upload your large file to a cloud sharing service, then share the link?"
         too_many_uploads: "Sorry, you can only upload one file at a time."
-        too_many_dragged_and_dropped_files: "Sorry, you can only upload 10 files at a time."
+        too_many_dragged_and_dropped_files: "Sorry, you can only upload {{max}} files at a time."
         upload_not_authorized: "Sorry, the file you are trying to upload is not authorized (authorized extensions: {{authorized_extensions}})."
         image_upload_not_allowed_for_new_user: "Sorry, new users can not upload images."
         attachment_upload_not_allowed_for_new_user: "Sorry, new users can not upload attachments."
@@ -2563,7 +2571,7 @@ en:
         today: "Today"
         other_periods: "see top"
 
-    browser_update: 'Unfortunately, <a href="http://www.discourse.org/faq/#browser">your browser is too old to work on this site</a>. Please <a href="http://browsehappy.com">upgrade your browser</a>.'
+    browser_update: 'Unfortunately, <a href="https://www.discourse.org/faq/#browser">your browser is too old to work on this site</a>. Please <a href="https://browsehappy.com">upgrade your browser</a>.'
 
     permission_types:
       full: "Create / Reply / See"
@@ -2609,6 +2617,7 @@ en:
       composing:
         title: 'Composing'
         return: '<b>shift</b>+<b>c</b> Return to composer'
+        fullscreen: '<b>shift</b>+<b>F11</b> Fullscreen composer'
       actions:
         title: 'Actions'
         bookmark_topic: '<b>f</b> Toggle bookmark topic'
@@ -2693,7 +2702,10 @@ en:
       sort_by_name: "name"
       manage_groups: "Manage Tag Groups"
       manage_groups_description: "Define groups to organize tags"
-
+      upload: "Upload Tags"
+      upload_description: "Upload a text file to create tags in bulk"
+      upload_instructions: "One per line, optionally with a tag group in the format 'tag_name,tag_group'."
+      upload_successful: "Tags uploaded successfully"
       filters:
         without_category: "%{filter} %{tag} topics"
         with_category: "%{filter} %{tag} topics in %{category}"
@@ -3130,6 +3142,7 @@ en:
           label: "Upload"
           title: "Upload a backup to this instance"
           uploading: "Uploading..."
+          uploading_progress: "Uploading... {{progress}}%"
           success: "'{{filename}}' has successfully been uploaded. The file is now being processed and will take up to a minute to show up in the list."
           error: "There has been an error while uploading '{{filename}}': {{message}}"
         operations:
@@ -3160,6 +3173,9 @@ en:
             label: "Rollback"
             title: "Rollback the database to previous working state"
             confirm: "Are you sure you want to rollback the database to the previous working state?"
+        location:
+          local: "Local"
+          s3: "Amazon S3"
 
       export_csv:
         success: "Export initiated, you will be notified via message when the process is complete."
@@ -3269,6 +3285,7 @@ en:
           import_web_tip: "Repository containing theme"
           import_file_tip: ".dcstyle.json file containing theme"
           is_private: "Theme is in a private git repository"
+          remote_branch: "Branch name (optional)"
           public_key: "Grant the following public key access to the repo:"
           about_theme: "About Theme"
           license: "License"
