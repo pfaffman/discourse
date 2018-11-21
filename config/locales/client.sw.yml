@@ -523,7 +523,6 @@ sw:
       topics_entered: "mada zilizoingizwa"
       post_count: "# machapisho"
       confirm_delete_other_accounts: "Una uhakika unataka kufuta hizi akaunti?"
-      powered_by: "inasimamiwa na <a href='https://ipinfo.io'>ipinfo.io</a>"
     user_fields:
       none: "(Chagua chaguo moja)"
     user:
@@ -607,7 +606,6 @@ sw:
       watched_first_post_tags: "Chapisho la Kwanza Linaangaliwa"
       watched_first_post_tags_instructions: "Utajulishwa kuhusu chapisho la kwanza kwenye kila mada mpya yenye lebo hizi."
       muted_categories: "Imenyamazishwa"
-      muted_categories_instructions: "Hautajulishwa kuhusu mada mpya kwenye kategoria hizi, na hazitatokea kama taarifa za hivi karibuni."
       no_category_access: "Kama msimamizi una ufikivu kidogo wa kategoria, hifadhi imesitishwa."
       delete_account: "Futa Akaunti Yangu"
       delete_account_confirm: "Una uhakika unataka kufuta akaunti yako? Kitendo hiki hakiwezi kufanyika tena!"
@@ -676,15 +674,10 @@ sw:
       second_factor:
         title: "Uhalalalishaji wa Viwango Viwili"
         disable: "Zuia uhalalalishaji wa Viwango Viwili"
-        enable: "Wezesha <a href>two factor authentication</a> Kuongeza ulinzi katika akaunti"
         confirm_password_description: "Thibitisha nywila yako kuendelea"
         label: "Kodi"
-        enable_description: |
-          Skani hii QR Code kwa kutumia application inayoweza kuskani (<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a> – <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iOS</a> – <a href="https://www.microsoft.com/en-us/store/p/authenticator/9wzdncrfj3rj" target='_blank'>Windows Phone</a>) na andika kodi ya uthibitisho.
         disable_description: "Tafadhali andika kodi ya uthibitisho kutoka kwenye app yako"
         show_key_description: "Andika kwa mkono"
-        extended_description: |
-          Viwango viwili vya uthibitisho vinaweka ulinzi mkubwa kwenye akaaunti yako kwa sababu kitu nyongeza zaidi ya nywila kitahitajika kuingia kwenye akaunti. Vitu hivyo vinaweza kutengenezwa kwa ajili ya vifaa vya <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target='_blank'>Android</a>,<a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>, na <a href="https://www.microsoft.com/en-us/store/p/authenticator/9wzdncrfj3rj" target='_blank'>Windows Phone</a>.
         oauth_enabled_warning: "Tafadhali jua kuwa kuingia kupitia mitandao itasitishwa kama uthibitisho wa kiwango cha pili umewezeshwa kwenye akaunti yako."
       change_about:
         title: "Badilisha Taarifa Zangu"
@@ -704,7 +697,6 @@ sw:
         title: "Badilisha Picha yako"
         gravatar: "imetoka kwa <a href='//gravatar.com/emails' target='_blank'>Ishara</a>"
         gravatar_title: "Badilisha Ishara kwenye Mtandao wa Ishara"
-        gravatar_failed: "Tumeshindwa kupata ishara. Je una ishara ambayo inatumika kwenye barua pepe yako ?"
         refresh_gravatar_title: "Onesha Upya Ishara Yako"
         letter_based: "Mfumo imekabidhi Picha"
         uploaded_avatar: "Picha Binafsi"
@@ -778,7 +770,6 @@ sw:
         always: "mara kwa mara"
         never: "kamwe"
       email_digests:
-        title: "Nisipotembelea hapa, nitumie muhtasari wa barua pepe ulio na mada na majibu maarufu"
         every_30_minutes: "kila baada ya dakika 30"
         every_hour: "kila saa"
         daily: "kila siku"
@@ -1024,7 +1015,7 @@ sw:
       complete_email_found: "Tumegundua akaunti inayolingana na  <b>%{email}</b>,utapokea barua pepe yenye maelezo ya jinsi ya kuweka upya nywila yako hivi punde."
       complete_username_not_found: "hakuna akaunti inayowiana na mtumiaji %{username}"
       complete_email_not_found: "Hakuna akaunti inawiana %{email}"
-      help: "Barua pepe haijafika? Hakikisha kuangalia folda la barua taka. <p>Hauna uhakika barua pepe uliyotumia? Andika barua pepe yako na tutakujulisha kama ipo kwetu.</p><p>Kama hauwezi kufikia barua pepe ya akaunti yako, tafadhali wasiliana na <a href='/about'>wasaidizi wetu.</a></p>"
+      help: "Barua pepe haijafika? Hakikisha kuangalia folda la barua taka. <p>Hauna uhakika barua pepe uliyotumia? Andika barua pepe yako na tutakujulisha kama ipo kwetu.</p><p>Kama hauwezi kufikia barua pepe ya akaunti yako, tafadhali wasiliana na <a href='%{basePath}/about'>wasaidizi wetu.</a></p>"
       button_ok: "Vema"
       button_help: "Msaada"
     email_login:
@@ -1531,7 +1522,7 @@ sw:
       toggle_information: "badilisha taarifa za mada"
       read_more_in_category: "Unataka kusoma zaidi? Vinjari mada zingine ndani ya {{catLink}} au {{latestLink}}."
       read_more: "Unataka kusoma zaidi? {{catLink}} au {{latestLink}}."
-      read_more_MF: "Kuna { UNREAD, plural, =0 {} one { ni <a href='/unread'>haijasomwa 1</a> } other { ni <a href='/unread'>haijasomwa #</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{na } false {ni } other {}} mada<a href='/new'>mpya 1</a>} other { {BOTH, select, true{na } false {ni } other{}} <a href='/new'>mada mpya #</a>} } zilizobaki, au {CATEGORY, select, true {vinjari mada zingine ndani ya {catLink}} hapana {{latestLink}} other {}}"
+      read_more_MF: "Kuna { UNREAD, plural, =0 {} one { ni <a href='{basePath}/unread'>haijasomwa 1</a> } other { ni <a href='{basePath}/unread'>haijasomwa #</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{na } false {ni } other {}} mada<a href='{basePath}/new'>mpya 1</a>} other { {BOTH, select, true{na } false {ni } other{}} <a href='{basePath}/new'>mada mpya #</a>} } zilizobaki, au {CATEGORY, select, true {vinjari mada zingine ndani ya {catLink}} hapana {{latestLink}} other {}}"
       browse_all_categories: Vinjari kategoria zote
       view_latest_topics: tembelea mada mpya
       suggest_create_topic: "Kwa nini usitengeneze mada?"
@@ -1616,7 +1607,7 @@ sw:
           "2_8": 'Utaona jumla ya majibu mapya kwa sababu unafuatilia kategoria hii.'
           "2_4": 'Utaweza kuona jumla ya majibu mapya kwa sababu ulichapisha jibu kwenye mada hii.'
           "2_2": 'Utaweza kuona jumla ya majibu mapya kwa sababu unafuatilia mada hii.'
-          "2": 'Utaweza kuona jumla ya majibu mapya kwa sababu uli<a href="/u/{{username}}/preferences">soma mada hii</a>.'
+          "2": 'Utaweza kuona jumla ya majibu mapya kwa sababu uli<a href="{{basePath}}/u/{{username}}/preferences">soma mada hii</a>.'
           "1_2": 'Utajulishwa kama mtu akitaja @jina lako au akikujibu.'
           "1": 'Utajulishwa kama mtu akitaja @jina lako au akikujibu.'
           "0_7": 'Unapuuzia taarifa za kategoria hii.'
@@ -1820,7 +1811,6 @@ sw:
         upload: "Samahani, hitilafu imetokea wakati wa kupakia faili hilo. Tafadhali jaribu tena."
         file_too_large: "Samahani, hilo faili ni kubwa sana (kiwango cha juu ni {{max_size_kb}}kb). Kwa nini usipakie faili lako kubwa kwenye huduma ya kugawa kwenye wingu kama Google Drive, Dropbox au OneDrive, alafu ukaandika kiungo hapa?"
         too_many_uploads: "Samahani, unaweza kupakia faili 1 tu kwa wakati mmoja."
-        too_many_dragged_and_dropped_files: "Samahani, unaweza kupakia mafaili 10 tu kwa wakati mmoja."
         upload_not_authorized: "Samahani, faili unalo jaribu kupakia halina kibali (authorized extensions: {{authorized_extensions}})."
         image_upload_not_allowed_for_new_user: "Samahani, watumiaji wapya hawawezi kupakia picha."
         attachment_upload_not_allowed_for_new_user: "Samahani, watumiaji wapya hawawezi kupakia viambatanisho."

@@ -508,7 +508,6 @@ nl:
       topics_entered: "topics ingevoerd"
       post_count: "# berichten"
       confirm_delete_other_accounts: "Weet u zeker dat u deze accounts wilt verwijderen?"
-      powered_by: "powered by <a href='https://ipinfo.io'>ipinfo.io</a>"
       copied: "gekopieerd"
     user_fields:
       none: "(selecteer een optie)"
@@ -588,7 +587,6 @@ nl:
       watched_first_post_tags: "Eerste bericht in de gaten houden"
       watched_first_post_tags_instructions: "U ontvangt een melding bij het eerste bericht in elk nieuw topic met deze tags."
       muted_categories: "Genegeerd"
-      muted_categories_instructions: "U ontvangt geen melding over nieuwe topics en berichten in deze categorieën, en ze verschijnen niet in Nieuwste."
       no_category_access: "Als een beheerder heeft u beperkte toegang tot categorieën, opslaan is uitgeschakeld."
       delete_account: "Mijn account verwijderen"
       delete_account_confirm: "Weet u zeker dat u uw account definitief wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt!"
@@ -727,7 +725,6 @@ nl:
         always: "altijd"
         never: "nooit"
       email_digests:
-        title: "Mij bij afwezigheid een e-mailsamenvatting van populaire topics en antwoorden sturen"
         every_30_minutes: "elke 30 minuten"
         every_hour: "elk uur"
         daily: "dagelijks"
@@ -959,7 +956,7 @@ nl:
       complete_email_found: "We hebben een account gevonden met het e-mailadres <b>%{email}<b/>. U zou spoedig een e-mail moeten ontvangen met instructies om uw wachtwoord opnieuw in te stellen."
       complete_username_not_found: "Geen account met de gebruikersnaam <b>%{username}</b> gevonden"
       complete_email_not_found: "Geen account met het e-mailadres <b>%{email}</b> gevonden"
-      help: "Komt de e-mail niet aan? Controleer eerst je spam map.<p>Weet je niet zeker welk e-mailadres je gebruikt hebt? Voer een e-mailadres in en we laten je weten of het hier bestaat.</p><p>Als je niet langer toegang hebt tot het e-mailadres van je account, neem alsjeblieft contact op met <a href='/about'>onze hulpvolle staf.</a></p>"
+      help: "Komt de e-mail niet aan? Controleer eerst je spam map.<p>Weet je niet zeker welk e-mailadres je gebruikt hebt? Voer een e-mailadres in en we laten je weten of het hier bestaat.</p><p>Als je niet langer toegang hebt tot het e-mailadres van je account, neem alsjeblieft contact op met <a href='%{basePath}/about'>onze hulpvolle staf.</a></p>"
       button_ok: "OK"
       button_help: "Help"
     login:
@@ -1357,7 +1354,7 @@ nl:
       toggle_information: "topicdetails in-/uitschakelen"
       read_more_in_category: "Wilt u meer lezen? U kunt door andere topics in {{catLink}} bladeren, of de {{latestLink}}."
       read_more: "Wilt u meer lezen? {{catLink}} of {{latestLink}}."
-      read_more_MF: "Er { UNREAD, plural, =0 {} one { is <a href='/unread'>1 ongelezen</a> } other { zijn <a href='/unread'># ongelezen</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{and } false {is } other{}} <a href='/new'>1 nieuw</a> topic} other { {BOTH, select, true{and } false {zijn } other{}} <a href='/new'># nieuwe</a> topics} } over, of {CATEGORY, select, true {blader door andere topics in {catLink}} false {{latestLink}} other {}}"
+      read_more_MF: "Er { UNREAD, plural, =0 {} one { is <a href='{basePath}/unread'>1 ongelezen</a> } other { zijn <a href='{basePath}/unread'># ongelezen</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{and } false {is } other{}} <a href='{basePath}/new'>1 nieuw</a> topic} other { {BOTH, select, true{and } false {zijn } other{}} <a href='{basePath}/new'># nieuwe</a> topics} } over, of {CATEGORY, select, true {blader door andere topics in {catLink}} false {{latestLink}} other {}}"
       browse_all_categories: Alle categorieën bekijken
       view_latest_topics: nieuwste topics bekijken
       suggest_create_topic: "Waarom maakt u geen topic aan?"
@@ -1441,7 +1438,7 @@ nl:
           "2_8": 'U ziet het aantal nieuwe antwoorden, omdat u deze categorie volgt.'
           "2_4": 'U ziet het aantal nieuwe antwoorden, omdat u een antwoord in dit topic hebt geplaatst.'
           "2_2": 'U ziet het aantal nieuwe antwoorden, omdat u dit topic volgt.'
-          "2": 'U ziet het aantal nieuwe antwoorden, omdat u <a href="/u/{{username}}/preferences">dit topic hebt gelezen</a>.'
+          "2": 'U ziet het aantal nieuwe antwoorden, omdat u <a href="{{basePath}}/u/{{username}}/preferences">dit topic hebt gelezen</a>.'
           "1_2": 'U ontvangt een melding als iemand uw @naam noemt of een bericht van u beantwoordt.'
           "1": 'U ontvangt een melding als iemand uw @naam noemt of een bericht van u beantwoordt.'
           "0_7": 'U negeert alle meldingen in deze categorie.'
@@ -1647,7 +1644,6 @@ nl:
         upload: "Sorry, er is een fout opgetreden bij het uploaden van dat bestand. Probeer het opnieuw."
         file_too_large: "Sorry, dat bestand is te groot (maximale grootte is {{max_size_kb}} kB). Misschien kunt u dit bestand uploaden naar een cloudopslagdienst en de koppeling ernaar delen?"
         too_many_uploads: "Sorry, u kunt maar één bestand tegelijk uploaden."
-        too_many_dragged_and_dropped_files: "Sorry, u kunt maar 10 bestanden tegelijk uploaden."
         upload_not_authorized: "Sorry, het bestand dat u probeert te uploaden is niet geautoriseerd (geautoriseerde extensies: {{authorized_extensions}})."
         image_upload_not_allowed_for_new_user: "Sorry, nieuwe gebruikers kunnen geen afbeeldingen uploaden."
         attachment_upload_not_allowed_for_new_user: "Sorry, nieuwe gebruikers kunnen geen bijlagen uploaden."

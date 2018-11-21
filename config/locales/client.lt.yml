@@ -569,7 +569,6 @@ lt:
       topics_entered: "paskelbtos temos"
       post_count: "# įrašai"
       confirm_delete_other_accounts: "Ar tikrai nori ištrinti šias paskyras?"
-      powered_by: "pagamino <a href='https://ipinfo.io'>ipinfo.io</a>"
       copied: "nukopijuota"
     user_fields:
       none: "(pasirink nustatymą)"
@@ -653,7 +652,6 @@ lt:
       watched_first_post_tags: "Stebime Pirmą Įrašą"
       watched_first_post_tags_instructions: "Jūs būsite perspėjami apie įrašus kėkvienoje naujoje temoje su pasirinktomis etiketėmis."
       muted_categories: "Nutildytos"
-      muted_categories_instructions: "Jums bus pranešta dėl naujų temų šioje kategorijoje."
       delete_account: "Ištrinti mano vartotoją"
       delete_account_confirm: "Ar tikrai norite visam laikui ištrinti savo paskyrą? Šis veiksmas yra galutinis."
       deleted_yourself: "Jūsų paskyra sėkmingai ištrinta."
@@ -810,7 +808,6 @@ lt:
         always: "visada"
         never: "niekada"
       email_digests:
-        title: "Kaip nesilankau čia, atsiųsti santraupas man į elektroninį paštą apie populiarias temas ir populiarius įrašus"
         every_30_minutes: "kas 30 minučių"
         every_hour: "kas valandą"
         daily: "kas dieną"
@@ -1473,7 +1470,7 @@ lt:
       toggle_information: "perjungti temos detales"
       read_more_in_category: "Nori skaityti daugiau? Ieškok kitų temų {{catLink}} arba {{latestLink}}."
       read_more: "Norite skaityti daugiau? {{catLink}} arba {{latestLink}}."
-      read_more_MF: "Šiuo metu { UNREAD, plural, =0 {} one { yra <a href='/unread'>1 neperskaityta</a> } other { yra <a href='/unread'># neperskaitytos</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{and } false {is } other{}} <a href='/new'>1 nauja</a> tema} other { {BOTH, select, true{and } false {are } other{}} <a href='/new'># naujos</a> temos} } remaining, or {CATEGORY, select, true {browse other topics in {catLink}} false {{latestLink}} other {}}"
+      read_more_MF: "Šiuo metu { UNREAD, plural, =0 {} one { yra <a href='{basePath}/unread'>1 neperskaityta</a> } other { yra <a href='{basePath}/unread'># neperskaitytos</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{and } false {is } other{}} <a href='{basePath}/new'>1 nauja</a> tema} other { {BOTH, select, true{and } false {are } other{}} <a href='{basePath}/new'># naujos</a> temos} } remaining, or {CATEGORY, select, true {browse other topics in {catLink}} false {{latestLink}} other {}}"
       browse_all_categories: Žiūrėkite visas kategorijas
       view_latest_topics: peržiūrėkite paskutines temas
       suggest_create_topic: "Kodėl gi nesukūrus naujos temos?"
@@ -2348,7 +2345,7 @@ lt:
           end_date: "End Date"
           groups: "Visos grupės"
           trending_search:
-            more: '<a href="/admin/logs/search_logs">Paieškos įrašai</a>'
+            more: '<a href="%{basePath}/admin/logs/search_logs">Paieškos įrašai</a>'
       commits:
         latest_changes: "Paskutiniai pakeitimai:"
         by: "nuo"

@@ -555,7 +555,6 @@ ro:
       topics_entered: "Subiecte la care particip"
       post_count: "# postări"
       confirm_delete_other_accounts: "Ești sigur că vrei să ștergi aceste conturi?"
-      powered_by: "creat de <a href='https://ipinfo.io'>ipinfo.io</a>"
     user_fields:
       none: "(alege o opțiune)"
     user:
@@ -637,7 +636,6 @@ ro:
       watched_first_post_tags: "Urmărire activă prima postare"
       watched_first_post_tags_instructions: "Vei fi notificat cu privire la prima postare din fiecare nou subiect cu aceste etichete."
       muted_categories: "Setat pe silențios"
-      muted_categories_instructions: "Nu vei fi notificat despre nimic legat de noile subiecte din aceste categorii și subiectele respective nu vor apărea în lista cu cele mai recente subiecte."
       no_category_access: "În calitate de moderator ai acces limitat la categorii, salvarea este dezactivată."
       delete_account: "Șterge-mi contul"
       delete_account_confirm: "Ești sigur că vrei să ștergi contul? Această acțiune este ireversibilă!"
@@ -709,7 +707,6 @@ ro:
         title: "Schimbă poza de profil"
         gravatar: "<a href='//gravatar.com/emails' target='_blank'>Gravatar</a>, bazat pe"
         gravatar_title: "Schimbă-ți avatarul de pe site-ul Gravatar."
-        gravatar_failed: "Gravatarul nu a putut fi preluat. Există unul asociat cu adresa de email respectivă?"
         refresh_gravatar_title: "Reactualizează Gravatarul"
         letter_based: "Poză de profil atribuită de sistem."
         uploaded_avatar: "Poză preferată"
@@ -778,7 +775,6 @@ ro:
         always: "întotdeauna"
         never: "niciodată"
       email_digests:
-        title: "Când nu vin aici în vizită, trimite-mi un email cu rezumatul subiectelor și răspunsurilor populare"
         every_30_minutes: "La fiecare 30 de minute "
         every_hour: "În fiecare oră"
         daily: "Zilnic"
@@ -1031,7 +1027,7 @@ ro:
       complete_email_found: "Am găsit un cont care se potrivește cu adresa <b>%{email}</b>, vei primi un email cu instrucțiunile de resetare a parolei în cel mai scurt timp."
       complete_username_not_found: "Nici un cont nu se potriveşte cu utilizatorul <b>%{username}</b>"
       complete_email_not_found: "Nici un cont nu se potrivește cu adresa  <b>%{email}</b>"
-      help: "Email-ul nu a sosit? Asigură-te că verifici mai întâi în folderul Spam. <p>Nu ești sigur ce adresă de email folosești? Scrie adresa de email și îți vom spune dacă aceasta există.</p><p>Dacă nu mai ai acces în contul tău la adresa de email, te rog contactează <a href='/about'>echipa de ajutor.</a></p>"
+      help: "Email-ul nu a sosit? Asigură-te că verifici mai întâi în folderul Spam. <p>Nu ești sigur ce adresă de email folosești? Scrie adresa de email și îți vom spune dacă aceasta există.</p><p>Dacă nu mai ai acces în contul tău la adresa de email, te rog contactează <a href='%{basePath}/about'>echipa de ajutor.</a></p>"
       button_ok: "Ok"
       button_help: "Ajutor"
     login:
@@ -1467,7 +1463,7 @@ ro:
       toggle_information: "comută între detaliile subiectului"
       read_more_in_category: "Vrei să citești mai mult? Răsfoiește alte subiecte din {{catLink}} sau {{latestLink}}."
       read_more: "Vrei să citești mai multe subiecte? {{catLink}} sau {{latestLink}}."
-      read_more_MF: "{ UNREAD, plural, =0 {} one { Există <a href='/unread'>un subiect necitit</a> } other { Sunt <a href='/unread'># subiecte necitite</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{și } false {există } other{}} <a href='/new'>un subiect  nou</a>} other { {BOTH, select, true{și } false {sunt } other{}} <a href='/new'># subiecte noi</a>} } rămas(e), sau {CATEGORY, select, true {răsfoiți alte subiecte în {catLink}} false {{latestLink}} other {}}"
+      read_more_MF: "{ UNREAD, plural, =0 {} one { Există <a href='{basePath}/unread'>un subiect necitit</a> } other { Sunt <a href='{basePath}/unread'># subiecte necitite</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{și } false {există } other{}} <a href='{basePath}/new'>un subiect  nou</a>} other { {BOTH, select, true{și } false {sunt } other{}} <a href='{basePath}/new'># subiecte noi</a>} } rămas(e), sau {CATEGORY, select, true {răsfoiți alte subiecte în {catLink}} false {{latestLink}} other {}}"
       browse_all_categories: Răsfoiți prin toate categoriile
       view_latest_topics: arată ultimele subiecte
       suggest_create_topic: "Ce ar fi să creezi un subiect?"
@@ -1550,7 +1546,7 @@ ro:
           "3_1": 'Vei primi notificări deoarece ai creat acest subiect.'
           "3": 'Vei primi notificări deoarece urmărești activ acest subiect.'
           "2_2": 'Vei vedea numărul răspunsurilor noi deoarece urmărești acest subiect.'
-          "2": 'Vei vedea numărul răspunsurilor noi deoarece <a href="/u/{{username}}/preferences">citești acest subiect</a>'
+          "2": 'Vei vedea numărul răspunsurilor noi deoarece <a href="{{basePath}}/u/{{username}}/preferences">citești acest subiect</a>'
           "1_2": 'Vei fi notificat dacă cineva îți menționează @numele sau îți scrie un răspuns.'
           "1": 'Vei fi notificat dacă cineva îți menționează @numele sau îți scrie un răspuns.'
           "0_7": 'Ignori toate notificările din această categorie.'
@@ -1776,7 +1772,6 @@ ro:
         upload: "Ne pare rău, a apărut o eroare la încărcarea fișierului. Te rugăm să încerci iar."
         file_too_large: "Ne pare rău, fișierul este prea mare (mărimea maximă este {{max_size_kb}}kb). De ce nu încarci  acest fișier mare pe un serviciu de distribuție prin cloud și apoi să îi partajezi link-ul?"
         too_many_uploads: "Ne pare rău, poți încărca doar câte un fișier."
-        too_many_dragged_and_dropped_files: "Ne pare rău, poți încărca doar 10 fișiere simultan."
         image_upload_not_allowed_for_new_user: "Ne pare rău, un utilizator nou nu poate încărca imagini."
         attachment_upload_not_allowed_for_new_user: "Ne pare rău, un utilizator nou nu poate încărca atașamente."
         attachment_download_requires_login: "Ne pare rău, dar trebuie să fii autentificat pentru a descărca ataşamente."

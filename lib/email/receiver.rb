@@ -882,7 +882,7 @@ module Email
     def attachments
       # strip blacklisted attachments (mostly signatures)
       @attachments ||= begin
-        attachments =  @mail.attachments.select { |attachment| is_whitelisted_attachment?(attachment) }
+        attachments =  @mail.parts.select { |part| part.attachment? && is_whitelisted_attachment?(part) }
         attachments << @mail if @mail.attachment? && is_whitelisted_attachment?(@mail)
         attachments
       end
@@ -994,6 +994,7 @@ module Email
          end
         raise TooShortPost
       end
+
       raise InvalidPost, errors.join("\n") if result.errors.any?
 
       if result.post

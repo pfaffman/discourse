@@ -497,6 +497,11 @@ class UsersController < ApplicationController
           Invite.invalidate_for_email(@user.email) # invite link can't be used to log in anymore
           secure_session["password-#{token}"] = nil
           secure_session["second-factor-#{token}"] = nil
+          UserHistory.create!(
+            target_user: @user,
+            acting_user: @user,
+            action: UserHistory.actions[:change_password]
+          )
           logon_after_password_reset
         end
       end
@@ -540,12 +545,22 @@ class UsersController < ApplicationController
             }
           end
         else
-          render json: {
-            is_developer: UsernameCheckerService.is_developer?(@user.email),
-            admin: @user.admin?,
-            second_factor_required: !valid_second_factor,
-            backup_enabled: @user.backup_codes_enabled?
-          }
+          if @error || @user&.errors&.any?
+            render json: {
+              success: false,
+              message: @error,
+              errors: @user&.errors&.to_hash,
+              is_developer: UsernameCheckerService.is_developer?(@user&.email),
+              admin: @user&.admin?
+            }
+          else
+            render json: {
+              is_developer: UsernameCheckerService.is_developer?(@user.email),
+              admin: @user.admin?,
+              second_factor_required: !valid_second_factor,
+              backup_enabled: @user.backup_codes_enabled?
+            }
+          end
         end
       end
     end

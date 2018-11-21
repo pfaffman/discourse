@@ -509,7 +509,6 @@ ca:
       watched_first_post_tags: "Mirant la primera publicació"
       watched_first_post_tags_instructions: "Et notificarem la primera publicació per cada nou tema a aquestes etqieuetes."
       muted_categories: "Silenciades"
-      muted_categories_instructions: "No et notificarem res sobre nous temes amb aquestes categories i no apareixeran a les darreres.."
       no_category_access: "Com a moderador/a tens accés limitat a la categoria. Desar està inhabilitat."
       delete_account: "Esborra el meu compte"
       delete_account_confirm: "Segur que vols esborrar el teu compte permanentment? Aquesta acció no es pot desfer!"
@@ -644,7 +643,6 @@ ca:
         always: "sempre"
         never: "mai"
       email_digests:
-        title: "Quan no ho visiti, envieu-me un correu electrònic amb un resum dels temes i respostes populars "
         every_30_minutes: "cada 30 minuts"
         every_hour: "cada hora"
         daily: "cada dia"
@@ -1221,7 +1219,7 @@ ca:
       toggle_information: "canvia els detalls del tema"
       read_more_in_category: "Vols llegir-ne més? Navega per altres temes a {{catLink}} o {{latestLink}}."
       read_more: "Vols llegir-ne més? {{catLink}} o {{latestLink}}."
-      read_more_MF: "Hi ha { UNREAD, plural, =0 {} one { <a href='/unread'>1 no llegit</a> } other { <a href='/unread'># no llegits</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{i } false {i } other{}} <a href='/new'>1 nou</a> topic} other { {BOTH, select, true{i } false {són } other{}} <a href='/new'># nous</a> topics} } restants, o {CATEGORY, select, true {navega altres temes a {catLink}} false {{latestLink}} other {}}"
+      read_more_MF: "Hi ha { UNREAD, plural, =0 {} one { <a href='{basePath}/unread'>1 no llegit</a> } other { <a href='{basePath}/unread'># no llegits</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{i } false {i } other{}} <a href='{basePath}/new'>1 nou</a> topic} other { {BOTH, select, true{i } false {són } other{}} <a href='{basePath}/new'># nous</a> topics} } restants, o {CATEGORY, select, true {navega altres temes a {catLink}} false {{latestLink}} other {}}"
       browse_all_categories: Navega per totes les categories
       view_latest_topics: mostra els darrers temes
       suggest_create_topic: "Per què no crear un tema?"
@@ -1268,7 +1266,7 @@ ca:
           "2_8": 'Rebràs notificacions, perquè estàs seguint aquesta categoria.'
           "2_4": 'Rebràs notificacions, perquè has escrit una resposta a aquest tema.'
           "2_2": 'Rebràs notificacions, perquè estàs seguint aquest tema.'
-          "2": 'Rebràs notificacions, perquè has <a href="/users/{{username}}/preferences">llegit aquest tema</a>.'
+          "2": 'Rebràs notificacions, perquè has <a href="%{basePath}/users/{{username}}/preferences">llegit aquest tema</a>.'
           "1_2": 'Només se''t notificarà si algú menciona el teu @nom o contesta la teva entrada.'
           "1": 'Se''t notificarà si algú menciona el teu @nom o contesta la teva entrada.'
           "0_7": 'No estàs fent cas de les alertes d''aquesta categoria.'
@@ -1470,7 +1468,6 @@ ca:
         upload: "Disculpa, s'ha produït una errada en carregar aquest fitxer. Si us plau, torna-ho a provar."
         file_too_large: "Disculpa, el fitxer és massa gran (la mida màxima és de {{max_size_kb}}kb). Per què no ho carregues a un servei de núvol, per compartir-ne l'enllaç?"
         too_many_uploads: "Disculpa, només pots carregar un fitxer d'un cop."
-        too_many_dragged_and_dropped_files: "Disculpa, només pots carregar 10 fitxers d'un cop."
         upload_not_authorized: "Disculpa, el fitxer que estàs provant de carregar no està autoritzat (les extensions autoritzades són: {{authorized_extensions}})."
         image_upload_not_allowed_for_new_user: "Disculpa, les noves persones usuàries no poden carregar imatges."
         attachment_upload_not_allowed_for_new_user: "Disculpa, les noves persones usuàries no poden adjuntar fitxers."

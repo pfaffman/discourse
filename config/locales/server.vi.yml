@@ -191,7 +191,7 @@ vi:
 
       - Sử dụng những từ khóa phổ biến để người khác có thể tìm thấy chủ đề của bạn dễ hơn. Để nhóm chủ đề của bạn với các chủ đề liên quan khác, hãy chọn chuyên mục cho chủ đề của mình.
 
-      Xem thêm, [hướng dẫn cộng đồng của chúng tôi](/guidelines). Bảng điều khiển này sẽ chỉ xuất hiện vào lần đầu %{education_posts_text}.
+      Xem thêm, [hướng dẫn cộng đồng của chúng tôi](%{base_path}/guidelines). Bảng điều khiển này sẽ chỉ xuất hiện vào lần đầu %{education_posts_text}.
     'new-reply': |
       Chào mừng bạn đến với %{site_name} &mdash; **cám ơn vì đã đóng góp!**
 
@@ -201,7 +201,7 @@ vi:
 
       - Lời phê bình mang tính đóng góp cũng được chào đón, nhưng bạn nên phê bình *ý tưởng* chứ không phải con người.
 
-      [Đọc hướng dẫn cộng đồng](/guidelines) để có thêm thông tin. Bảng này chỉ xuất hiện cho bài viết đầu tiên của bạn %{education_posts_text}.
+      [Đọc hướng dẫn cộng đồng](%{base_path}/guidelines) để có thêm thông tin. Bảng này chỉ xuất hiện cho bài viết đầu tiên của bạn %{education_posts_text}.
   activerecord:
     attributes:
       category:
@@ -361,7 +361,6 @@ vi:
       email_body: "%{link}\n\n%{message}"
     inappropriate:
       title: 'Không thích hợp'
-      description: 'Chủ để này chứa nội dung mà bình thường được xem là xúc phạm, lạm dụng, hoặc vi phạm <a href="/guidelines">nguyên tắc cộng đồng</a>.'
       long_form: 'đánh dấu cái này không thích hợp'
     notify_user:
       title: 'Gửi tin nhắn cho @{{username}}.'
@@ -389,11 +388,9 @@ vi:
       long_form: 'đã đánh dấu bài này dạng bài viết rác'
     inappropriate:
       title: 'Không phù hợp'
-      description: 'Chủ để này chứa nội dung mà với lý lẽ thường nhật được xem là xúc phạm, lạm dụng, hoặc  vi phạm <a href="/guidelines">chỉ dẫn chung của cộng đồng</a>.'
       long_form: 'đã đánh dấu bài này không phù hợp'
     notify_moderators:
       title: "Một cái khác"
-      description: 'Bài viết này cần Ban quản trị lưu ý theo dựa trên <a href="/guidelines">hướng dẫn</a> và <a href="%{tos_url}">điều khoản</a>  sử dụng.'
       long_form: 'đã đánh dấu cho điều hành viên xem xét'
       email_title: 'Chủ đề "%{title}" cần được ban điều hành quan tâm'
       email_body: "%{link}\n\n%{message}"
@@ -544,17 +541,12 @@ vi:
     sidekiq_warning: ' Sidekiq đang không hoạt động. Rất nhiều tác vụ, như gửi email, là được thực thi không đồng bộ bởi sidekiq. Hãy chắc chắn rằng ít nhất một tiến trình sidekiq phải đang hoạt động. <a href="https://github.com/mperham/sidekiq" target="_blank">Đọc thêm về Sidekiq tại đây</a>.'
     queue_size_warning: 'Có %{queue_size} công việc đang chờ xử lý trong hàng đợi. Điều này chứng tỏ có vấn đề đã xảy ra với tiến trình Sidekiq, hoặc bạn cần tăng số lượng Sidekiq workers ().'
     memory_warning: 'Máy chủ của bạn có bộ nhớ ít hơn 1 GB. Khuyến cáo sử dụng bộ nhớ tối thiểu 1 GB .'
-    google_oauth2_config_warning: 'Máy chủ được cấu hình cho phép đăng ký và đăng nhập với Google OAuth2 (enable_google_oauth2_logins), tuy nhiên giá trị của client id và client secret thì không được thiết lập. Truy cập <a href="/admin/site_settings">Cấu hình Site</a> và bổ sung các thiết lập đó. <a href="https://meta.discourse.org/t/configuring-google-login-for-discourse/15858" target="_blank">Xem hướng dẫn này để biết thêm chi tiết</a>.'
-    facebook_config_warning: 'Máy chủ được cấu hình cho phép đăng ký và đăng nhập với Facebook  (enable_facebook_logins), tuy nhiên giá trị của client id và client secret thì không được thiết lập. Truy cập <a href="/admin/site_settings">Cấu hình Site</a> và bổ sung các thiết lập đó. <a href="https://meta.discourse.org/t/configuring-facebook-login-for-discourse/13394" target="_blank">Xem hướng dẫn này để biết thêm chi tiết</a>.'
-    twitter_config_warning: 'Máy chủ được cấu hình cho phép đăng ký và đăng nhập với Twitter   (enable_twitter_logins), tuy nhiên giá trị của client id và client secret thì không được thiết lập. Truy cập <a href="/admin/site_settings">Cấu hình Site</a> và bổ sung các thiết lập đó. <a href="https://meta.discourse.org/t/configuring-twitter-login-for-discourse/13395" target="_blank">Xem hướng dẫn này để biết thêm chi tiết</a>.'
-    github_config_warning: 'Máy chủ được cấu hình cho phép đăng ký và đăng nhập với GitHub    (enable_github_logins), tuy nhiên giá trị của client id và client secret thì không được thiết lập. Truy cập <a href="/admin/site_settings">Cấu hình Site</a> và bổ sung các thiết lập đó. <a href="https://meta.discourse.org/t/configuring-github-login-for-discourse/13745" target="_blank">Xem hướng dẫn này để biết thêm chi tiết</a>.'
-    failing_emails_warning: 'Có %{num_failed_jobs} email jobs thấ bại. Kiểm tra app.yml và chắc chắn rằng cấu hình máy chủ email đúng. <a href="/sidekiq/retries" target="_blank">Xem jobs thất bại ở Sidekiq</a>.'
     subfolder_ends_in_slash: "Thư mục con của bạn được thiết lập không đúng, DISCOURSE_RELATIVE_URL_ROOT phải được kết thúc bằng dấu gạch chéo."
     email_polling_errored_recently:
-      other: "Email đã tạo %{count} lỗi trong 24 giờ qua, xem <a href='/logs' target='_blank'>nhật ký</a> để biết thêm chi tiết."
-    bad_favicon_url: "Favicon không tải được, bạn hãy kiểm tra lại favicon_url trong <a href='/admin/site_settings'>Thiết Lập Website</a>."
-    poll_pop3_timeout: "Không thể kết nối với POP3 server, sẽ không nhận được email gửi đến. Bạn hãy kiểm tra <a href='/admin/site_settings/category/email'>thiết lập POP3</a> và nhà cung cấp dịch vụ."
-    poll_pop3_auth_error: "Không thể kết nối với POP3 server do lỗi chứng thực. Bạn hãy kiểm tra <a href='/admin/site_settings/category/email'>thiết lập POP3</a>."
+      other: "Email đã tạo %{count} lỗi trong 24 giờ qua, xem <a href='%{base_path}/logs' target='_blank'>nhật ký</a> để biết thêm chi tiết."
+    bad_favicon_url: "Favicon không tải được, bạn hãy kiểm tra lại favicon_url trong <a href='%{base_path}/admin/site_settings'>Thiết Lập Website</a>."
+    poll_pop3_timeout: "Không thể kết nối với POP3 server, sẽ không nhận được email gửi đến. Bạn hãy kiểm tra <a href='%{base_path}/admin/site_settings/category/email'>thiết lập POP3</a> và nhà cung cấp dịch vụ."
+    poll_pop3_auth_error: "Không thể kết nối với POP3 server do lỗi chứng thực. Bạn hãy kiểm tra <a href='%{base_path}/admin/site_settings/category/email'>thiết lập POP3</a>."
   site_settings:
     censored_words: "Từ sẽ tự động thay thế bằng &#9632;&#9632;&#9632;&#9632;"
     delete_old_hidden_posts: "Tự động ẩn bất kỳ bài viết ở ẩn hơn 30 ngày."
@@ -642,13 +634,11 @@ vi:
     min_admin_password_length: "Chiều dài mật khẩu tối thiểu đối với Admin."
     block_common_passwords: "Không cho phép mật khẩu trong danh sách 10.000 mật khẩu phổ biến."
     enable_sso: "Cho phép dùng single sign on bằng trang ngoài (CẢNH BÁO: ĐỊA CHỈ EMAIL CỦA NGƯỜI DÙNG PHẢI ĐƯỢC CHỨNG THỰC BỞI TRANG NGOÀI!)"
-    enable_sso_provider: "Thực hiện giao thức cung cấp Discourse SSO tại điểm cuối /session/sso_provider, yêu cầu phải thiết lập sso_secret"
     sso_url: "URL đầu cuối của Single Sign On (phải kèm theo http:// hoặc https://)"
     sso_secret: "Chuỗi bảo mật đã được sử dụng để chứng thực thông tin SSO, chắc chắn nó có ít nhất 10 ký tự."
     sso_overrides_email: "Ghi đè email cục bộ với email trang ngoài từ SSO cho tất cả các lần đăng nhập, và ngăn chặn những thay đổi cục bộ. (LƯU Ý: sự khác biệt có thể xảy ra do sự bình thường hóa các email cục bộ)"
     sso_overrides_username: "Ghi đè tên tài khoản cục bộ với tài khoản trang ngoài từ SSO cho tất cả các lần đăng nhập, và ngăn chặn những thay đổi cục bộ. (LƯU Ý: sự khác biệt có thể xảy ra do yêu cầu độ dài tên tài khoản khác nhau)"
     sso_overrides_name: "Ghi đè tên thành viên cục bộ với tên thành viên trang ngoài từ SSO cho tất cả các lần đăng nhập, và ngăn chặn những thay đổi cục bộ."
-    sso_overrides_avatar: "Ghi đè avatar thành viên cục bộ với avatar thành viên trang ngoài từ SSO. Nếu bật, bạn nên vô hiệu hóa allow_uploaded_avatars"
     sso_not_approved_url: "Chuyển những tài khoản SSO chưa duyệt tới URL này"
     allow_new_registrations: "Cho phép đăng ký người dùng mới. Bỏ chọn để bất cứ ai cũng có thể tạo tài khoản mới."
     enable_signup_cta: "Hiện thông báo với thành viên ẩn danh khi họ quay lại để yêu cầu họ đăng ký tài khoản."
@@ -661,7 +651,6 @@ vi:
     allow_restore: "Cho phép phục hồi, nó có thể thay thế TẤT CẢ dữ liệu trang web! Bỏ chọn, trừ khi bạn có kế hoạch phục hồi một bản sao lưu"
     maximum_backups: "Số bản sao lưu tối đa lưu trong đĩa cứng. Những bản sao lưu cũ sẽ được xóa tự động"
     automatic_backups_enabled: "Chạy sao lưu tự động như cấu hình trong tần số sao lưu"
-    enable_s3_backups: "Tải bản sao lưu lên S3 khi hoàn tất. QUAN TRỌNG: yêu cầu chứng thực S3 đã được nhập trong cấu hình File."
     s3_backup_bucket: "Địa chỉ tách biệt lưu trữ backup. LƯU Ý: đây phải là địa chỉ được giành riêng."
     s3_disable_cleanup: "Vô hiệu hóa việc loại bỏ các bản sao lưu từ S3 khi lấy ra tại địa phương."
     backup_time_of_day: "Thời gian theo ngày UTC khi backup."
@@ -779,7 +768,7 @@ vi:
     auto_respond_to_flag_actions: "Kích hoạt tính năng trả lời tự động khi xử lý một đánh dấu."
     min_first_post_typing_time: "Số lượng thời gian tối thiểu theo phần ngàn giây mà thành viên phải nhập trong bài viết đầu tiên, nếu ngưỡng không được đáp ứng sẽ tự động nhập vào hàng chờ duyệt. Đặt là 0 để tắt (không khuyến nghị)"
     reply_by_email_enabled: "Cho phép trả lời chủ đề qua email."
-    reply_by_email_address: "Mẫu để trả lời cho các địa chỉ email đến, ví dụ: %{reply_key}@reply.example.com hoặc replies+%{reply_key}@example.com"
+    reply_by_email_address: "Mẫu để trả lời cho các địa chỉ email đến, ví dụ: %%{reply_key}@reply.example.com hoặc replies+%%{reply_key}@example.com"
     strip_images_from_short_emails: "Tất cả các ảnh từ email phải có kích cỡ nhỏ hơn 2800 Bytes"
     short_email_length: "Độ dài email ngắn theo Bytes"
     display_name_on_email_from: "Hiển thị tên đầy đủ trên email từ trường"
@@ -877,7 +866,7 @@ vi:
       invalid_string_min_max: "Phải nằm giữa %{min} và %{max} ký tự."
       invalid_string_min: "Phải ít nhất %{min} ký tự."
       invalid_string_max: "Không nhiều hơn %{max} ký tự."
-      invalid_reply_by_email_address: "Giá trị phải chứa '%{reply_key}' và phải khác với email thông báo."
+      invalid_reply_by_email_address: "Giá trị phải chứa '%%{reply_key}' và phải khác với email thông báo."
       pop3_polling_host_is_empty: "Bạn phải thiết lập 'pop3 polling host' trước khi kích hoạt POP3 polling."
       pop3_polling_username_is_empty: "Bạn phải thiết lập 'pop3 polling username' trước khi kích hoạt POP3 polling."
       pop3_polling_password_is_empty: "Bạn phải thiết lập 'pop3 polling password' trước khi kích hoạt POP3 polling."
@@ -979,7 +968,7 @@ vi:
     subject_template: "Đặt mật khẩu cho tài khoản của bạn ở %{site_name}"
   flag_reasons:
     off_topic: "Bài viết của bạn được đánh dấu là **off-topic**: cộng đồng cảm thấy nó không phù hợp cho chủ đề này, được xác định bởi tiêu đề và bài viết đầu tiên."
-    inappropriate: "Bài viết của bạn được đánh dấu là **inappropriate**: cộng đồng cảm thấy đó là sự xúc phạm, lăng mạ, hoặc vi phạm [nội quy diễn đàn](/guidelines)."
+    inappropriate: "Bài viết của bạn được đánh dấu là **inappropriate**: cộng đồng cảm thấy đó là sự xúc phạm, lăng mạ, hoặc vi phạm [nội quy diễn đàn](%{base_path}/guidelines)."
     spam: "Bài viết của bạn được đánh dấu là **spam**: cộng đồng cảm thấy đó là một quảng cáo, khuyến mại thay vì một nội dung hữu ích như mong đợi."
     notify_moderators: "Bài viết của bạn được đánh dấu là **for moderator attention**: cộng đồng cảm thấy có điều gì đó cần được BQT xét duyệt."
   flags_dispositions:
@@ -1099,7 +1088,6 @@ vi:
     search_title: "Tìm trang này"
   terms_of_service:
     title: "Điều khoản Dịch vụ"
-    signup_form_message: 'Tôi đã đọc và đồng ý với <a href="/tos" target="_blank">Điều khoản dịch vụ</a>.'
   deleted: 'đã bị xóa '
   upload:
     edit_reason: "tải về một bản sao của hình ảnh."

@@ -237,7 +237,7 @@ ro:
 
       - Include în subiect cuvinte folosite în mod obișnuit pentru a le da altora posibilitatea să îl *găsească*. Pentru a grupa subiectul tău laolaltă cu alte subiecte asemănătoare, alege o anumită categorie.
 
-      Pentru mai multe îndrumări, [citește ghidul comunității](/guidelines). Această secțiune de pagină va apărea doar pentru prima/primele %{education_posts_text}.
+      Pentru mai multe îndrumări, [citește ghidul comunității](%{base_path}/guidelines). Această secțiune de pagină va apărea doar pentru prima/primele %{education_posts_text}.
     'new-reply': |
       Bine ai venit la %{site_name} &mdash; **Îți mulțumim pentru contribuție!**
 
@@ -247,7 +247,7 @@ ro:
 
       - Critica constructivă e binevenită, critică *ideea*, nu oamenii.
 
-      Pentru detalii, [verifică regulile comune](/reguli). Acest panel va apărea doar pentru prima %{education_posts_text}.
+      Pentru detalii, [verifică regulile comune](%{base_path}/reguli). Acest panel va apărea doar pentru prima %{education_posts_text}.
     avatar: |
       ### Ce zici de o poză atașată contului tău?
 
@@ -489,7 +489,6 @@ ro:
       email_body: "%{link}\n\n%{message}"
     inappropriate:
       title: 'Necorespunzător'
-      description: 'Această postare are un conținut pe care o persoană rezonabilă l-ar putea considera drept ofensator, abuziv, sau o violare a <a href="/guidelines"> ghidului comunității</a>.'
       long_form: 'marcat ca necorespunzător'
     notify_user:
       title: 'Trimite-i un mesaj lui @{{username}}'
@@ -523,11 +522,9 @@ ro:
       long_form: 'Marchează ca spam'
     inappropriate:
       title: 'Necorespunzător'
-      description: 'Acest subiect are conținut ce ar putea fi considerat drept ofensator, abuziv, sau o violare a <a href="/guidelines"> regulilor comunității</a>.'
       long_form: 'marcat cu marcaj de avertizare ca inadecvat'
     notify_moderators:
       title: "Alt motiv"
-      description: 'Acest subiect necesită atenția generală a echipei pe  baza <a href="/guidelines">ghidului</a>, <a href="%{tos_url}">CGU</a>, sau pentru un alt motiv care nu este menționat anterior.'
       long_form: 'marcat cu marcaj de avertizare în atenția moderatorilor'
       email_title: 'Subiectul "%{title}" necesită atenția moderatorilor'
       email_body: "%{link}\n\n%{message}"
@@ -717,19 +714,14 @@ ro:
     sidekiq_warning: 'Sidekiq nu este pornit. Multe acțiuni, cum ar fi trimiterea de emailuri, sunt executate asincron de către sidekiq. Asigură-te că măcar un proces din sidekiq este pornit. <a href="https://github.com/mperham/sidekiq" target="_blank"> Citește despre Sidekiq aici</a>.'
     queue_size_warning: 'Numărul de sarcini aflate în lista de așteptare este de %{queue_size}, ceea ce e mult. Asta poate indica o problemă cu procesul(ele) Sidekiq, sau că e necesar să adaugi mai multi  Sidekiq workers.'
     memory_warning: 'Serverul tău lucrează cu mai puțin de 1 GB memorie. Se recomandă cel puțin 1 GB memorie.'
-    google_oauth2_config_warning: 'Serverul e configurat să permită autentificarea cu Google OAuth2 (enable_google_oauth2_logins), dar valorile secrete ale clientului precum și id-ul clientului nu sunt setate. Mergi la <a href="/admin/site_settings">Setările site-ului</a> și modifică setările. <a href="https://meta.discourse.org/t/configuring-google-login-for-discourse/15858" target="_blank">Vizualizează ghidul pentru mai multe informații</a>.'
-    facebook_config_warning: 'Serverul e configurat să permită înscrierea și autentificarea cu Facebook (enable_facebook_logins), dar app id și valoarea app secret nu sunt setate. Mergi la <a href="/admin/site_settings">Setările site-ului</a> și modifică setările. <a href="https://meta.discourse.org/t/configuring-facebook-login-for-discourse/13394" target="_blank">Vizualizează ghidul pentru mai multe informații</a>.'
-    twitter_config_warning: 'Serverul e configurat să permită înscrierea și autentificarea cu Twitter (enable_twitter_logins),dar cheia și valoarea secretă nu sunt setate. Mergi la <a href="/admin/site_settings">Setările site-ului</a> și modifică setarea. <a href="https://meta.discourse.org/t/configuring-twitter-login-for-discourse/13395" target="_blank">Vizualizează ghidul pentru mai multe informații</a>.'
-    github_config_warning: 'Serverul e configurat să permită înscrierea și autentificarea cu GitHub (enable_github_logins), dar id-ul de client și valorile secrete nu sunt setate. Mergi la <a href="/admin/site_settings">Setările site-ului</a> și modifică setarea. <a href="https://meta.discourse.org/t/configuring-github-login-for-discourse/13745" target="_blank">Vizualizează ghidul pentru mai multe informații</a>.'
-    failing_emails_warning: 'Există %{num_failed_jobs} (de) sarcini email care au eșuat. Verifică app.yml și asigură-te că setările serverului de mail sunt corecte. <a href="/sidekiq/retries" target="_blank">Vizualizează sarcini eșuate în Sidekiq</a>.'
     subfolder_ends_in_slash: "Setările subfolderului sunt incorecte; DISCOURSE_RELATIVE_URL_ROOT se termină cu slash."
     email_polling_errored_recently:
-      one: "Email polling a generat o eroare în ultimele 24 de ore. Vizualizează <a href='/logs' target='_blank'>rapoartele</a> pentru mai multe detalii."
-      few: "Email polling a generat %{count} erori în ultimele 24 de ore. Vizualizează <a href='/logs' target='_blank'>rapoartele</a> pentru mai multe detalii."
-      other: "Retragerea de emailuri generat %{count} de erori în ultimele 24 de ore. Vizualizează <a href='/logs' target='_blank'>rapoartele</a> pentru mai multe detalii."
-    bad_favicon_url: "Eroare la încărcarea Favicon. Verifică setarea favicon_url în <a href='/admin/site_settings'>Setările site-ului</a>."
-    poll_pop3_timeout: "Conexiunea la serverul POP3 a dat time-out. Mailurile primite nu au putut fi accesate. Te rugăm să verifici <a href='/admin/site_settings/category/email'>setările POP3</a> și furnizorul de servicii."
-    poll_pop3_auth_error: "Conexiunea la serverul POP3 a eșuat cu o eroare de autentificare. Te rugăm să verifici <a href='/admin/site_settings/category/email'>setările POP3</a>."
+      one: "Email polling a generat o eroare în ultimele 24 de ore. Vizualizează <a href='%{base_path}/logs' target='_blank'>rapoartele</a> pentru mai multe detalii."
+      few: "Email polling a generat %{count} erori în ultimele 24 de ore. Vizualizează <a href='%{base_path}/logs' target='_blank'>rapoartele</a> pentru mai multe detalii."
+      other: "Retragerea de emailuri generat %{count} de erori în ultimele 24 de ore. Vizualizează <a href='%{base_path}/logs' target='_blank'>rapoartele</a> pentru mai multe detalii."
+    bad_favicon_url: "Eroare la încărcarea Favicon. Verifică setarea favicon_url în <a href='%{base_path}/admin/site_settings'>Setările site-ului</a>."
+    poll_pop3_timeout: "Conexiunea la serverul POP3 a dat time-out. Mailurile primite nu au putut fi accesate. Te rugăm să verifici <a href='%{base_path}/admin/site_settings/category/email'>setările POP3</a> și furnizorul de servicii."
+    poll_pop3_auth_error: "Conexiunea la serverul POP3 a eșuat cu o eroare de autentificare. Te rugăm să verifici <a href='%{base_path}/admin/site_settings/category/email'>setările POP3</a>."
   site_settings:
     censored_words: "Cuvintele vor fi înlocuite automat cu &#9632;&#9632;&#9632;&#9632;"
     delete_old_hidden_posts: "șterge automat toate postările ascunse care stau ascunse mai mult de 30 de zile."
@@ -834,14 +826,12 @@ ro:
     min_admin_password_length: "Lungimea maximă a parolei pentru Admin."
     block_common_passwords: "Nu permite parole ce sunt printre cele 10,000 cele mai cunoscute parole."
     enable_sso: "Activează opțiunea single sign on via site extern (ATENȚIE: ADRESELE DE EMAIL ALE UTILIZATORILOR *TREBUIE* VALIDATE DE SITE-UL EXTERN!)"
-    enable_sso_provider: "Implementează protocolul furnizorului SSO Discourse la punctul final /session/sso_provider, sso_secret trebuie să fie setat."
     sso_url: "URL pentru autentificare unică la punct final (trebuie să includă http:// or https://)"
     sso_secret: "șir secret folosit pentru autentificarea criptografică a SSO, asigură-te că este de minim 10 caractere"
     sso_overrides_bio: "Suprascrie biografia utilizatorului în profil utilizator și nu-i permite acestuia să o modifice"
     sso_overrides_email: "Suprascrie emailul local cu un email de pe un site extern din datele furnizate de SSO la fiecare autentificare și împiedică schimbările locale. (ATENȚIE: pot apărea discrepanțe din cauza normalizării emailurilor locale)"
     sso_overrides_username: "Suprascrie numele de utilizator local cu numele utilizator de pe site-ul extern din datele SSO la fiecare autentificare și împiedică schimbările locale (ATENȚIE: pot apărea discrepanțe din cauza diferențelor în lungimea/pre-condițiile numelui utilizator)"
     sso_overrides_name: "Suprascrie numele întreg de pe local cu numele întreg din datele SSO la fiecare autentificare și împiedică schimbările locale."
-    sso_overrides_avatar: "Suprascrie avatarul utilizatorului cu avatarul din datele SSO. Dacă este activat, se recomandă călduros dezactivarea allow_uploaded_avatars"
     sso_not_approved_url: "Redirecționează conturile neaprobate SSO către acest URL"
     sso_allows_all_return_paths: "Nu restricționa domeniul pentru return_paths furnizate de SSO (implicit, calea de întoarcere trebuie să fie pe site-ul curent)"
     allow_new_registrations: "Permite înregistrarea noilor utilizatori. Debifați pentru a restricționa pe oricine să creeze un cont nou."
@@ -856,7 +846,6 @@ ro:
     allow_restore: "Bifează-l doar dacă dorești să restaurezi un fișier de backup. Atenție, restaurarea poate șterge/înlocui TOATE datele din site!"
     maximum_backups: "Maximul de fișiere backup păstrate. Fișierele backup vechi sunt șterse automat"
     automatic_backups_enabled: "Rulează automat operațiuni de backup după cum este definit la frecvența de backup"
-    enable_s3_backups: "Încarcă fișierele backup pe s3 când sunt complete. IMPORTANT: sunt necesare date de autentificare valide pentru S3 în secțiunea FIșIERE."
     s3_backup_bucket: "Containerul (bucket) de la distanță care ține backupurile. ATENȚIE: Asgură-te că e un container privat."
     s3_disable_cleanup: "Dezactivează eliminarea backup-urilor de pe S3 când sunt șterse local."
     backup_time_of_day: "Ora în format UTC la care să înceapă operațiunea de backup."
@@ -984,8 +973,8 @@ ro:
     auto_respond_to_flag_actions: "Activează răspunsul automat la gestionarea unui marcaj de avertizare."
     min_first_post_typing_time: "Durata de timp minimă în milisecunde cât este nevoie ca un utilizator să tasteze la prima postare, dacă acest prag nu este atins postarea va intra automat în coada mesajelor care necesită aprobare. Valoarea 0 dezactivează (nerecomandat)"
     reply_by_email_enabled: "Activează răspunsurile către subiecte prin email."
-    reply_by_email_address: "șablon pentru răspuns prin email de intrare, de exemplu: %{reply_key}@reply.example.com sau răspunsuri+%{reply_key}@example.com"
-    alternative_reply_by_email_addresses: "Listă de șabloane alternative pentru adresele de email primite cu răspunsuri prin email. Exemplu: %{reply_key}@reply.example.com|replies+%{reply_key}@example.com"
+    reply_by_email_address: "șablon pentru răspuns prin email de intrare, de exemplu: %%{reply_key}@reply.example.com sau răspunsuri+%%{reply_key}@example.com"
+    alternative_reply_by_email_addresses: "Listă de șabloane alternative pentru adresele de email primite cu răspunsuri prin email. Exemplu: %%{reply_key}@reply.example.com|replies+%%{reply_key}@example.com"
     strip_images_from_short_emails: "Scoate imaginile din emailurile care au mai puțin de 2800 de Bytes"
     short_email_length: "Lungime de email scurt în Bytes"
     display_name_on_email_from: "Afișează numele complete în câmpul From din email"
@@ -1142,8 +1131,8 @@ ro:
       invalid_string_min_max: "Trebuie să aibă între %{min} și %{max} caractere."
       invalid_string_min: "Trebuie să aibă %{min} caractere."
       invalid_string_max: "Nu trebuie să depășească %{max} caractere."
-      invalid_reply_by_email_address: "Valoarea trebuie să conțină '%{reply_key}' și să fie diferită de emailul de notificare."
-      invalid_alternative_reply_by_email_addresses: "Toate valorile trebuie să conțină '%{reply_key}' și să fie diferite de emailul de notificare."
+      invalid_reply_by_email_address: "Valoarea trebuie să conțină '%%{reply_key}' și să fie diferită de emailul de notificare."
+      invalid_alternative_reply_by_email_addresses: "Toate valorile trebuie să conțină '%%{reply_key}' și să fie diferite de emailul de notificare."
       pop3_polling_host_is_empty: "Trebuie să setezi „numele serverului de POP3” înainte să poți activa retragerea de emailuri prin POP3"
       pop3_polling_username_is_empty: "Trebuie să setezi „numele utilizator pe serverul POP3” înainte să poți activa retragerea de emailuri prin POP3."
       pop3_polling_password_is_empty: "Trebuie să setezi „parola pe serverul POP3” înainte să poți activa retragerea de emailuri prin POP3."
@@ -1283,7 +1272,7 @@ ro:
     subject_template: "Setează parolă pentru contul tău %{site_name}"
   flag_reasons:
     off_topic: "Postarea ta a fost marcată cu marcaj de avertizare **în afara subiectului**: comunitatea simte că nu se potrivește subiectului, așa cum e el momentan definit de titlu și de prima postare."
-    inappropriate: "Postarea ta a fost marcată cu marcaj de avertizare **inadecvat**: comunitatea simte că este ofensatoare, abuzivă sau în contradicție cu [ghidul comunității noastre](/guidelines)."
+    inappropriate: "Postarea ta a fost marcată cu marcaj de avertizare **inadecvat**: comunitatea simte că este ofensatoare, abuzivă sau în contradicție cu [ghidul comunității noastre](%{base_path}/guidelines)."
     spam: "Postarea ta a fost marcată cu marcaj de avertizare **spam**: comunitatea crede că reprezintă o reclamă, ceva ce este de natura excesiv de promoțională, în loc să fie o postare utilă sau relevantă pentru subiect după cum se presupune."
     notify_moderators: "Postarea ta a fost marcată cu marcaj de avertizare **în atenția moderatorului**: comunitatea simte că există ceva legat de această postare care necesită intervenția manuală a unui membrul al echipei."
   flags_dispositions:
@@ -1640,7 +1629,6 @@ ro:
     search_title: "Caută în site"
   terms_of_service:
     title: "Condițiile generale de utilizare"
-    signup_form_message: 'Am citit și accept <a href="/tos" target="_blank">Condițiile generale de utilizare</a>.'
   deleted: 'șters'
   upload:
     edit_reason: "copii locale ale imaginilor descărcate"
@@ -1656,8 +1644,8 @@ ro:
   avatar:
     missing: "Ne pare rău, dar nu putem găsi avatarul asociat cu această adresă de email. Ai putea să îl încarci din nou?"
   flag_reason:
-    sockpuppet: "Un utilizator nou a creat un subiect, și un alt utilizator nou de la aceeași adresă de IP (%{ip_address}) a răspuns. Vezi <a href='/admin/site_settings/category/spam'>`flag_sockpuppets`</a> la setările site-ului."
-    spam_hosts: "Acest nou utilizator a încrecat să creeze postări multiple cu link-uri către acelasi domeniu (%{domain}). Vezi <a href='/admin/site_settings/category/spam'>`newuser_spam_host_threshold`</a> la setările site-ului."
+    sockpuppet: "Un utilizator nou a creat un subiect, și un alt utilizator nou de la aceeași adresă de IP (%{ip_address}) a răspuns. Vezi <a href='%{base_path}/admin/site_settings/category/spam'>`flag_sockpuppets`</a> la setările site-ului."
+    spam_hosts: "Acest nou utilizator a încrecat să creeze postări multiple cu link-uri către acelasi domeniu (%{domain}). Vezi <a href='%{base_path}/admin/site_settings/category/spam'>`newuser_spam_host_threshold`</a> la setările site-ului."
   skipped_email_log:
     user_email_notification_topic_nil: "post.topic este nil"
   color_schemes:
@@ -1985,10 +1973,10 @@ ro:
           contact_email:
             label: "Mail"
             placeholder: "nume@exemplu.comb"
-            description: "Adresa de email a persoanei sau grupului responsabil de aceasta comunitate. Folosită pentru notificări critice cum ar fi marcaje de avertizare negestionate, actualizări de securitate și afișată pe pagina <a href='/about' target='_blank'>Despre noi</a> pentru contactarea de urgență a comunității."
+            description: "Adresa de email a persoanei sau grupului responsabil de aceasta comunitate. Folosită pentru notificări critice cum ar fi marcaje de avertizare negestionate, actualizări de securitate și afișată pe pagina <a href='%{base_path}/about' target='_blank'>Despre noi</a> pentru contactarea de urgență a comunității."
           contact_url:
             label: "Pagină web"
-            description: "Pagina web generică cu date de contact pentru tine sau organizația ta. Se va afișa pe <a href='/about' target='_blank'>pagina despre noi</a>. "
+            description: "Pagina web generică cu date de contact pentru tine sau organizația ta. Se va afișa pe <a href='%{base_path}/about' target='_blank'>pagina despre noi</a>. "
           site_contact:
             label: "Mesaje automate"
       corporate:
@@ -2048,9 +2036,6 @@ ro:
         description: "Aproape ai încheiat ! Hai să invităm câțiva prieteni să te ajute <a href='https://blog.discourse.org/2014/08/building-a-discourse-community/' target='blank'>cu demararea comunității </a> prin discuții și răspunsuri interesante."
       finished:
         title: "Discourse-ul tău e gata!"
-        description: |
-          <p>Dacă vei dori vreodată să schimbi aceste setări, vizitează <a href='/admin' target='_blank'>secțiunea admin</a>; care se găsește lângă iconița cu cheia franceză din meniul site-ului.</p>
-          <p>Distracție plăcută și mult succes<a href='https://blog.discourse.org/2014/08/building-a-discourse-community/' target='_blank'>la construcția noii comunități!</a></p>
   discourse_push_notifications:
     popup:
       mentioned: '%{username} te-a menționat în discuția "%{topic}" - %{site_title}'

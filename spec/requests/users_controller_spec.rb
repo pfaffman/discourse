@@ -122,11 +122,9 @@ describe UsersController do
     end
 
     context 'missing token' do
-      before do
-        get "/u/password-reset/#{token}"
-      end
-
       it 'disallows login' do
+        get "/u/password-reset/#{token}"
+
         expect(response.status).to eq(200)
 
         expect(CGI.unescapeHTML(response.body))
@@ -136,6 +134,14 @@ describe UsersController do
           src: '/assets/application.js'
         })
 
+        expect(session[:current_user_id]).to be_blank
+      end
+
+      it "responds with proper error message" do
+        get "/u/password-reset/#{token}.json"
+
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)["message"]).to eq(I18n.t('password_reset.no_token'))
         expect(session[:current_user_id]).to be_blank
       end
     end
@@ -233,6 +239,22 @@ describe UsersController do
         put "/u/password-reset/#{token}", params: { password: 'hg9ow8yhg98oadminlonger' }
 
         expect(response).to redirect_to(wizard_path)
+      end
+
+      it "logs the password change" do
+        user = Fabricate(:admin)
+        UserAuthToken.generate!(user_id: user.id)
+        token = user.email_tokens.create(email: user.email).token
+        get "/u/password-reset/#{token}"
+
+        expect do
+          put "/u/password-reset/#{token}", params: { password: 'hg9ow8yhg98oadminlonger' }
+        end.to change { UserHistory.count }.by (1)
+
+        entry = UserHistory.last
+
+        expect(entry.target_user_id).to eq(user.id)
+        expect(entry.action).to eq(UserHistory.actions[:change_password])
       end
 
       it "doesn't invalidate the token when loading the page" do
@@ -529,7 +551,7 @@ describe UsersController do
         post "/u.json", params: {
           name: @user.name,
           username: @user.username,
-          passsword: 'tesing12352343'
+          password: 'tesing12352343'
         }
         expect(response.status).to eq(400)
       end

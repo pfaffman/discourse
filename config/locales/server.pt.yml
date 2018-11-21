@@ -245,7 +245,7 @@ pt:
 
       - Inclua palavras usadas com frequência no seu tópico para que outros possam *encontrá-lo*. Para agrupar o seu tópico com tópicos relacionados, selecione a categoria.
 
-      Para mais, [verifique as orientações da comunidade](/guidelines). Este painel irá aparecer apenas para o seu primeiro %{education_posts_text}.
+      Para mais, [verifique as orientações da comunidade](%{base_path}/guidelines). Este painel irá aparecer apenas para o seu primeiro %{education_posts_text}.
     'new-reply': |
       Bem-vindo a %{site_name} &mdash; **obrigado por contribuir!**
 
@@ -255,7 +255,7 @@ pt:
 
       - Críticas construtivas são bem-vindas, mas critique *ideias*, não pessoas.
 
-      Para mais, [verifique as orientações da comunidade](/guidelines). Este painel irá aparecer apenas para o seu primeiro %{education_posts_text}.
+      Para mais, [verifique as orientações da comunidade](%{base_path}/guidelines). Este painel irá aparecer apenas para o seu primeiro %{education_posts_text}.
   activerecord:
     attributes:
       category:
@@ -480,8 +480,6 @@ pt:
       email_body: "%{link}\n\n%{message}"
     inappropriate:
       title: 'Inapropriado'
-      description: 'Esta mensagem contém conteúdo que uma pessoa sensata iria considerar ofensivo, abusivo, ou como uma violação das <a href="/guidelines"> orientações da nossa comunidade</a>.'
-      short_description: 'Uma violação das <a href="/guidelines">nossas linhas diretrizes comunitárias</a>'
       long_form: 'sinalizou isto como inapropriado'
     notify_user:
       title: 'Enviar uma mensagem a @{{username}}'
@@ -518,11 +516,9 @@ pt:
       long_form: 'sinalizou isto como spam'
     inappropriate:
       title: 'Inapropriado'
-      description: 'Este tópico contém conteúdo que uma pessoa sensata consideraria ofensivo, abusivo ou como uma violação das <a href="/guidelines">orientações da nossa comunidades</a>.'
       long_form: 'sinalizou isto como inapropriado'
     notify_moderators:
       title: "Algo Mais"
-      description: 'Este tópico requer a atenção geral do pessoal baseado nas <a href="/guidelines">orientações</a>, <a href="%{tos_url}">Termos e Condições</a>, ou por outra razão não listada acima.'
       long_form: 'sinalizou isto para obter a atenção do moderador'
       email_title: 'O tópico "%{title}" requer a atenção do moderador'
       email_body: "%{link}\n\n%{message}"
@@ -704,18 +700,13 @@ pt:
     sidekiq_warning: 'Sidekiq não está em execução. Muitas tarefas, como envio de emails, são executadas de forma assíncrona pelo sidekiq. Por favor certifique-se de que pelo menos um processo sidekiq está em execução. <a href="https://github.com/mperham/sidekiq" target="_blank">Aprenda sobre Sidekiq aqui</a>.'
     queue_size_warning: 'O número de trabalhos na fila é %{queue_size}, o que é alto. Isto pode indicar um problema com o(s) processo(s) Sidekiq, ou pode necessitar de adicionar mais trabalhadores Sidekiq.'
     memory_warning: 'O seu servidor está a executar com menos de 1 GB de memória total. Pelo menos 1 GB é a quantidade de memória recomendada.'
-    google_oauth2_config_warning: 'O servidor está configurado para permitir inscrever-se e entrar com o Google OAuth2 (enable_google_oauth2_logins), mas o id e os valores privados do cliente não estão configurados. Vá   <a href="/admin/site_settings">às Configurações do Sítio</a> e atualize as definições. <a href="https://meta.discourse.org/t/configuring-google-login-for-discourse/15858" target="_blank">Veja este guia para saber mais</a>.'
-    facebook_config_warning: 'O servidor está configurado para permitir inscrever-se e entrar com o Facebook (enable_facebook_logins), mas o id e os valores privados da aplicação não estão configurados. Vá  <a href="/admin/site_settings">às Configurações do Sítio</a> e atualize as definições. <a href="https://meta.discourse.org/t/configuring-facebook-login-for-discourse/13394" target="_blank">Veja este guia para saber mais</a>.'
-    twitter_config_warning: 'O servidor está configurado para permitir inscrever-se e entrar com o Twitter (enable_twitter_logins), mas a chave e os valores privados não estão configurados. Vá <a href="/admin/site_settings">às Configurações do Sítio</a> e atualize as definições. <a href="https://meta.discourse.org/t/configuring-twitter-login-for-discourse/13395" target="_blank">Veja este guia para saber mais</a>.'
-    github_config_warning: 'O servidor está configurado para permitir inscrever-se e entrar com o GitHub (enable_github_logins), mas o id e valores privados do cliente não estão configurados. Vá <a href="/admin/site_settings">às Configurações do Sítio</a> e atualize as definições. <a href="https://meta.discourse.org/t/configuring-github-login-for-discourse/13745" target="_blank">Veja este guia para saber mais</a>.'
-    failing_emails_warning: 'Há %{num_failed_jobs} tarefas de email que falharam. Verifique o seu app.yml e assegure-se que as configurações do servidor de email estão corretas. <a href="/sidekiq/retries" target="_blank"> Veja as tarefas que falharam no Sidekiq</a>.'
     subfolder_ends_in_slash: "A configuração da sua sub-página está incorreta; o DISCOURSE_RELATIVE_URL_ROOT termina com um traço."
     email_polling_errored_recently:
-      one: "A consulta automática de emails gerou um erro nas últimas 24 horas. Consulte em <a href='/logs' target='_blank'>os registos</a> para mais detalhes."
-      other: "A consulta automática de emails gerou %{count} erros nas últimas 24 horas. Consulte em <a href='/logs' target='_blank'>os registos</a> para mais detalhes."
-    bad_favicon_url: "Não estamos a conseguir carregar o favicon. Por favor, confirme a sua configuração favicon_url nas  <a href='/admin/site_settings'>Configurações do sítio</a>."
-    poll_pop3_timeout: "A tentativa de ligação ao servidor POP3 está a ultrapassar o tempo máximo. O email da caixa de entrada não pôde ser obtido. Por favor verifique a sua <a href='/admin/site_settings/category/email'>configuração de POP3</a> e fornecedor de serviço internet."
-    poll_pop3_auth_error: "A tentativa de ligação ao servidor POP3 está a falhar por motivos de erro de autenticação. Por favor verifique a sua <a href='/admin/site_settings/category/email'>configuração de POP3</a>."
+      one: "A consulta automática de emails gerou um erro nas últimas 24 horas. Consulte em <a href='%{base_path}/logs' target='_blank'>os registos</a> para mais detalhes."
+      other: "A consulta automática de emails gerou %{count} erros nas últimas 24 horas. Consulte em <a href='%{base_path}/logs' target='_blank'>os registos</a> para mais detalhes."
+    bad_favicon_url: "Não estamos a conseguir carregar o favicon. Por favor, confirme a sua configuração favicon_url nas  <a href='%{base_path}/admin/site_settings'>Configurações do sítio</a>."
+    poll_pop3_timeout: "A tentativa de ligação ao servidor POP3 está a ultrapassar o tempo máximo. O email da caixa de entrada não pôde ser obtido. Por favor verifique a sua <a href='%{base_path}/admin/site_settings/category/email'>configuração de POP3</a> e fornecedor de serviço internet."
+    poll_pop3_auth_error: "A tentativa de ligação ao servidor POP3 está a falhar por motivos de erro de autenticação. Por favor verifique a sua <a href='%{base_path}/admin/site_settings/category/email'>configuração de POP3</a>."
   site_settings:
     censored_words: "Palavras que serão automaticamente substituídas por &#9632;&#9632;&#9632;&#9632;"
     delete_old_hidden_posts: "Eliminar automaticamente quaisquer mensagens ocultas que permaneçam escondidas por mais de 30 dias."
@@ -820,14 +811,12 @@ pt:
     min_admin_password_length: "Tamanho mínimo da palavra-passe para Administração."
     block_common_passwords: "Não permitir palavras-passe que estejam nas 10,000 palavras-passe mais comuns."
     enable_sso: "Ativar inscrição única através de um sítio externo (AVISO: OS ENDEREÇOS DE EMAIL DOS UTILIZADORES *DEVEM* SER VALIDADOS PELO SÍTIO EXTERNO!)"
-    enable_sso_provider: "Implementar o protocolo do provedor SSO do Discourse no caminho /session/sso_provider, requer que sso_secret seja configurado"
     sso_url: "URL da terminação de single-sign-on (tem de incluir http:// ou https://)"
     sso_secret: "String secreta usada para autenticar criptograficamente informação SSO, garanta que tem 10 ou  mais caracteres"
     sso_overrides_bio: "Sobrepõe-se à biografia do utilizador e previne o utilizador de a mudar"
     sso_overrides_email: "Substitui o email local por um email de um sítio externo a partir de um SSO em cada início de sessão, e previne mudanças locais. (AVISO: podem ocorrer discrepâncias devido à normalização de emails locais) "
     sso_overrides_username: "Substitui nomes de utilizadores locais por nomes de utilizadores de sítios externos a partir de um SSO em cada início de sessão, e previne mudanças locais. (AVISO: podem ocorrer discrepâncias devido a diferenças no comprimento/requisitos do nome de utilizador)"
     sso_overrides_name: "Substitui o nome completo local por um nome completo de um sítio externo a partir de um SSO em cada início de sessão, e previne mudanças locais."
-    sso_overrides_avatar: "Substitui o avatar do utilizador com avatares externos a partir de um SSO. Se ativo, é altamente recomendada a desativação de allow_uploaded_avatars"
     sso_not_approved_url: "Redirecionar contas SSO não aprovadas para este URL"
     allow_new_registrations: "Permitir registo de novos utilizadores. Desmarcar isto para prevenir que alguém crie uma nova conta."
     enable_signup_cta: "Mostrar um aviso a utilizadores anónimos que retornem levando-os a inscreverem-se para uma conta."
@@ -841,7 +830,6 @@ pt:
     allow_restore: "Permitir o restauro, que pode substituir TODOS os dados do sítio. Deixar a falso a menos que planeie restaurar uma cópia de segurança"
     maximum_backups: "Valor máximo de cópias de segurança a serem guardadas em disco. Cópias de Segurança antigas são automaticamente eliminadas."
     automatic_backups_enabled: "Executar cópias de segurança automáticas de acordo com as definições de frequência de cópia de segurança"
-    enable_s3_backups: "Carregar cópias de segurança para S3 quando completo. IMPORTANTE: requer credenciais S3 válidas inseridas nas configurações dos ficheiros."
     s3_backup_bucket: "Balde remoto para guardar cópias de segurança. AVISO: Certifique-se que este é um balde privado."
     s3_disable_cleanup: "Desactive a remoção das cópias de segurança do S3 quando removidas localmente."
     backup_time_of_day: "Altura do dia UTC em que a cópia de segurança deve ocorrer."
@@ -970,8 +958,8 @@ pt:
     auto_respond_to_flag_actions: "Ativar respostas automáticas ao eliminar uma bandeira."
     min_first_post_typing_time: "Quantidade mínima de tempo em milissegundos que um utilizador deve digitar durante a sua primeira mensagem, se o limite não for atingido a mensagem será automaticamente inserida na fila de aprovação. Configurar a 0 para desativar (não recomendado)"
     reply_by_email_enabled: "Ativar respostas aos tópicos por email."
-    reply_by_email_address: "Modelo para endereços emails recebidos com função resposta por email, por exemplo: %{reply_key}@resposta.exemplo.com ou resposta+%{reply_key}@exemplo.com"
-    alternative_reply_by_email_addresses: "Lista de modelos alternativos para respostas via email. Exemplo: %{reply_key}@resposta.exemplo.com ou resposta+%{reply_key}@exemplo.com"
+    reply_by_email_address: "Modelo para endereços emails recebidos com função resposta por email, por exemplo: %%{reply_key}@resposta.exemplo.com ou resposta+%%{reply_key}@exemplo.com"
+    alternative_reply_by_email_addresses: "Lista de modelos alternativos para respostas via email. Exemplo: %%{reply_key}@resposta.exemplo.com ou resposta+%%{reply_key}@exemplo.com"
     strip_images_from_short_emails: "Remover imagens de emails cujo tamanho seja inferior a 2800 Bytes"
     short_email_length: "Comprimento de email curto, em Bytes"
     display_name_on_email_from: "Exibir nomes completos em campos do formulário de email"
@@ -1127,8 +1115,8 @@ pt:
       invalid_string_min_max: "Deve ser entre %{min} e %{max} caracteres."
       invalid_string_min: "Deve ser pelo menos %{min} caracteres."
       invalid_string_max: "Não deve ser mais que %{max} caracteres."
-      invalid_reply_by_email_address: "O valor deve conter '%{reply_key}' e ser diferente do email de notificação."
-      invalid_alternative_reply_by_email_addresses: "Todos os valores devem conter '%{reply_key}' e ser diferentes do email de notificação."
+      invalid_reply_by_email_address: "O valor deve conter '%%{reply_key}' e ser diferente do email de notificação."
+      invalid_alternative_reply_by_email_addresses: "Todos os valores devem conter '%%{reply_key}' e ser diferentes do email de notificação."
       pop3_polling_host_is_empty: "Deve configurar um 'pop3 polling host' antes de ativar o polling POP3."
       pop3_polling_username_is_empty: "Deve configurar um 'nome de utilizador de polling pop3' antes de ativar o polling POP3."
       pop3_polling_password_is_empty: "Deve configurar uma 'palavra-passe de polling pop3' antes de ativar o polling POP3."
@@ -1267,7 +1255,7 @@ pt:
     subject_template: "[%{email_prefix}] disponível atualização"
   flag_reasons:
     off_topic: "A sua mensagem foi marcada como **fora do contexto**: a comunidade sente que não se enquadra neste tópico, conforme o seu título e a sua primeira mensagem."
-    inappropriate: "A sua mensagem foi sinalizada como **inapropriada**: a comunidade sente que é ofensiva, abusiva ou que é uma violação das [orientações da nossa comunidade](/guidelines)."
+    inappropriate: "A sua mensagem foi sinalizada como **inapropriada**: a comunidade sente que é ofensiva, abusiva ou que é uma violação das [orientações da nossa comunidade](%{base_path}/guidelines)."
     spam: "A sua mensagem foi marcada como **spam**: a comunidade sente que é um anúncio, algo que é excecionalmente promocional na sua natureza em vez de ser útil ou relevante para o tópico tal como seria esperado."
     notify_moderators: "A sua mensagem foi marcada **para atenção do moderador**: a comunidade sente que algo na sua mensagem requer intervenção manual de um membro do pessoal."
   flags_dispositions:
@@ -1585,7 +1573,6 @@ pt:
     search_title: "Pesquisar neste sítio"
   terms_of_service:
     title: "Termos de Serviço"
-    signup_form_message: 'Li e aceito os <a href="/tos" target="_blank">Termos de Serviço</a>.'
   deleted: 'eliminado'
   upload:
     edit_reason: "cópias locais de imagens transferidas"
@@ -1601,8 +1588,8 @@ pt:
   avatar:
     missing: "Desculpe, mas não conseguimos encontrar nenhum avatar associado com esse endereço de email. Pode tentar carregá-lo novamente?"
   flag_reason:
-    sockpuppet: "Um novo utilizador criou um tópico, no qual um outro novo utilizador com o mesmo IP (%{ip_address})  respondeu. Veja as configurações de <a href='/admin/site_settings/category/spam'>`flag_sockpuppets`</a> nas configurações do sítio."
-    spam_hosts: "Este novo utilizador tentou criar múltiplas publicações com ligações ao mesmo domínio  (%{domain}). Verifique as configurações do sítio de <a href='/admin/site_settings/category/spam'>`newuser_spam_host_threshold`</a>."
+    sockpuppet: "Um novo utilizador criou um tópico, no qual um outro novo utilizador com o mesmo IP (%{ip_address})  respondeu. Veja as configurações de <a href='%{base_path}/admin/site_settings/category/spam'>`flag_sockpuppets`</a> nas configurações do sítio."
+    spam_hosts: "Este novo utilizador tentou criar múltiplas publicações com ligações ao mesmo domínio  (%{domain}). Verifique as configurações do sítio de <a href='%{base_path}/admin/site_settings/category/spam'>`newuser_spam_host_threshold`</a>."
   color_schemes:
     base_theme_name: "Base"
   about: "Sobre"
@@ -1927,10 +1914,10 @@ pt:
           contact_email:
             label: "Email"
             placeholder: "name@example.com"
-            description: "Endereço de email da pessoa ou grupo responsáveis por esta comunidade. Usado para notificações críticas tais como denúncias não tratadas, actualizações de segurança, assim  como <a href='/about' target='_blank'>na sua página de descrição</a> para comunicações urgentes com a comunidade."
+            description: "Endereço de email da pessoa ou grupo responsáveis por esta comunidade. Usado para notificações críticas tais como denúncias não tratadas, actualizações de segurança, assim  como <a href='%{base_path}/about' target='_blank'>na sua página de descrição</a> para comunicações urgentes com a comunidade."
           contact_url:
             label: "Página da Internet"
-            description: "Página da internet com informação geral sobre si ou a sua organização. Será mostrada na <a href='/about' target='_blank'>sua página de descrição</a>."
+            description: "Página da internet com informação geral sobre si ou a sua organização. Será mostrada na <a href='%{base_path}/about' target='_blank'>sua página de descrição</a>."
           site_contact:
             label: "Mensagens Automatizadas"
       corporate:
@@ -1983,6 +1970,3 @@ pt:
         title: "Convidar Equipa de Apoio"
       finished:
         title: "O seu Discourse está Pronto!"
-        description: |
-          <p>Se alguma vez quiser mudar estas configurações, visite <a href='/admin' target='_blank'>a sua secção de administração</a>; encontre-a junto ao ícone de chave inglesa no menu do sítio.</p>
-          <p>Divirta-se, e boa sorte <a href='https://blog.discourse.org/2014/08/building-a-discourse-community/' target='_blank'>para a construção da sua comunidade!</a></p>

@@ -549,7 +549,6 @@ he:
       watched_first_post_tags: "צפייה בפוסט ראשון"
       watched_first_post_tags_instructions: "אתם תיודעו לגבי הפוסט הראשון בכל נושא חדש בתגיות אלו."
       muted_categories: "מושתק"
-      muted_categories_instructions: "אתם לא תיודעו על שום דבר לגבי נושאים חדשים בקטגוריות אלו, והם לא יופיעו ב״אחרונים״."
       no_category_access: "בתור מנחים יש לכם גישה מוגבלת לקטגוריות, שמירה מנוטרלת."
       delete_account: "מחק את החשבון שלי"
       delete_account_confirm: "אתם בטוחים שברצונכם להסיר את החשבון? לא ניתן לבטל פעולה זו!"
@@ -687,7 +686,6 @@ he:
         always: "תמיד"
         never: "אף פעם"
       email_digests:
-        title: "כאשר אינני מבקר פה, שלחו לי מייל מסכם של נושאים ותגובות פופולאריים"
         every_30_minutes: "מידי 30 דקות"
         every_hour: "שעתי"
         daily: "יומית"
@@ -1309,7 +1307,7 @@ he:
       toggle_information: "הצגת פרטי נושא"
       read_more_in_category: "רוצים לקרוא עוד? עיינו בנושאים אחרים ב {{catLink}} או {{latestLink}}."
       read_more: "רוצה לקרוא עוד? {{catLink}} or {{latestLink}}."
-      read_more_MF: "יש { UNREAD, plural, =0 {} one { <a href='/unread'>1 שלא נקרא</a> } other { <a href='/unread'># שלא נקראו</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{ו} false {} other{}} נושא חדש <a href='/new'>אחד</a>} other { {BOTH, select, true{ו} false {} other{}} <a href='/new'>#</a> נושאים חדשים} } נותרים, or {CATEGORY, select, true {עיין בנושאים אחרים ב {catLink}} false {{latestLink}} other {}}"
+      read_more_MF: "יש { UNREAD, plural, =0 {} one { <a href='{basePath}/unread'>1 שלא נקרא</a> } other { <a href='{basePath}/unread'># שלא נקראו</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{ו} false {} other{}} נושא חדש <a href='{basePath}/new'>אחד</a>} other { {BOTH, select, true{ו} false {} other{}} <a href='{basePath}/new'>#</a> נושאים חדשים} } נותרים, or {CATEGORY, select, true {עיין בנושאים אחרים ב {catLink}} false {{latestLink}} other {}}"
       browse_all_categories: עיינו בכל הקטגוריות
       view_latest_topics: הצגת נושאים אחרונים
       suggest_create_topic: "למה לא ליצור נושא חדש?"
@@ -1390,7 +1388,7 @@ he:
           "2_8": 'תראו ספירה של תגובות חדשות כיוון שאתם עוקבים אחר קטגוריה זו.'
           "2_4": 'תראו ספירה של תגובות חדשות כיוון שפרסמתם תגובה לנושא זה.'
           "2_2": 'תראו ספירה של תגובות חדשות כיוון שאתם עוקבים אחר נושא זה:'
-          "2": 'אתם תראו ספירה של תגובות חדשות כיוון ש<a href="/u/{{username}}/preferences">קראתם נושא זה</a>.'
+          "2": 'אתם תראו ספירה של תגובות חדשות כיוון ש<a href="{{basePath}}/u/{{username}}/preferences">קראתם נושא זה</a>.'
           "1_2": 'תקבלו התראה אם מישהו יזכיר את @שם_המשתמש/ת שלכם או ישיב לכם.'
           "1": 'תקבלו התראה אם מישהו יזכיר את @שם_המשתמש/ת שלכם או ישיב לכם.'
           "0_7": 'אתם מתעלמים מכל ההתראות בקטגוריה זו.'
@@ -1618,7 +1616,6 @@ he:
         upload: "סליחה, הייתה שגיאה בהעלאת הקובץ שלך. אנא נסו שנית"
         file_too_large: "מצטערים, הקובץ גדול מידי (הגודל המירבי הוא {{max_size_kb}}kb). אולי תקצו להעלות קבצים גדולים לשירות שיתוף בענן ולשתף את הקישור."
         too_many_uploads: "סליחה, אך ניתן להעלות רק קובץ אחת כל פעם."
-        too_many_dragged_and_dropped_files: "מצטערים, אתם יכולים להעלות עד 10 קבצים בו זמנית."
         upload_not_authorized: "מצטערים, הקובץ שאתם מנסים להעלות אינו מורשה (סיומות מורשות: {{authorized_extensions}})."
         image_upload_not_allowed_for_new_user: "סליחה, משתמשים חדשים לא יכולים להעלות תמונות."
         attachment_upload_not_allowed_for_new_user: "סליחה, משתמשים חדשים לא יכולים להעלות קבצים."

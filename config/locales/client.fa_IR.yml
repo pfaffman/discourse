@@ -591,7 +591,6 @@ fa_IR:
       watched_first_post_tags: "درحال مشاهده نوشته اول"
       watched_first_post_tags_instructions: "از اولین نوشته هر موضوع که شامل این برچسب‌ها باشد مطلع خواهید شد."
       muted_categories: "بی‌صدا شد"
-      muted_categories_instructions: "شما از اتفاقات جدید در این دسته‌بندی‌ها آگاه نمیشوید، و آن ها در آخرین ها نمایش داده نمیشوند."
       delete_account: "حساب‌کاربری من را پاک کن"
       delete_account_confirm: "آیا مطمئنید که می‌خواهید شناسه‌تان را برای همیشه پاک کنید؟ برگشتی در کار نیست!"
       deleted_yourself: "حساب‌ کاربری شما با موفقیت حذف شد."
@@ -648,7 +647,6 @@ fa_IR:
       second_factor:
         title: "احراز هویت دو مرحله ای"
         disable: "از کار انداختن احراز هویت دو مرحله ای"
-        enable: "برای بهبود امنیت حساب کاربری <a href>احراز هویت دو مرحله ای</a> را فعال کنید"
       change_about:
         title: "تغییر «درباره‌ی من»"
         error: "در فرآیند تغییر این مقدار خطایی روی داد."
@@ -732,7 +730,6 @@ fa_IR:
         always: "همیشه"
         never: "هیچوقت"
       email_digests:
-        title: "وقت‌هایی که در انجمن نیستم خلاصه موضوعات و پاسخ‌های پر‌طرفدار را برایم بفرست."
         every_30_minutes: "هر 30 دقیقه"
         every_hour: "هر ساعت"
         daily: "روزانه"
@@ -1324,7 +1321,7 @@ fa_IR:
       toggle_information: " تغییر وضعیت جزئیات موضوع"
       read_more_in_category: "می‌خواهید بیشتر بخوانید؟موضوعات دیگر را در {{catLink}} یا {{latestLink}} مرور کنید."
       read_more: "می‌خواهید بیشتر بخوانید؟ {{catLink}} یا {{latestLink}}."
-      read_more_MF: "{ UNREAD, plural, =0 {} one { <a href='/unread'>یک پیام خوانده نشده</a>  } other { <a href='/unread'># پیام خوانده نشده</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{و } false { } other{}} <a href='/new'>1 موضوع جدید</a> } other { {BOTH, select, true{و } false { } other{}} <a href='/new'># موضوع جدید</a> } } وجود دارد, یا {CATEGORY, select, true {نمایش سایر موضوعات دسته‌بندی {catLink}} false {{latestLink}} other {}}"
+      read_more_MF: "{ UNREAD, plural, =0 {} one { <a href='{basePath}/unread'>یک پیام خوانده نشده</a>  } other { <a href='{basePath}/unread'># پیام خوانده نشده</a> } } { NEW, plural, =0 {} one { {BOTH, select, true{و } false { } other{}} <a href='{basePath}/new'>1 موضوع جدید</a> } other { {BOTH, select, true{و } false { } other{}} <a href='{basePath}/new'># موضوع جدید</a> } } وجود دارد, یا {CATEGORY, select, true {نمایش سایر موضوعات دسته‌بندی {catLink}} false {{latestLink}} other {}}"
       browse_all_categories: جستوجوی همه‌ی دسته‌‌بندی‌ها
       view_latest_topics: مشاهده آخرین موضوع
       suggest_create_topic: چرا یک موضوع ایجاد نمی‌کنید؟
@@ -1403,7 +1400,7 @@ fa_IR:
           "2_8": 'به دلیل ارسال پیگیری این دسته‌بندی، پاسخ‌های جدید موضوع را خواهید دید.'
           "2_4": 'به دلیل ارسال نوشته در این موضوع، پاسخ‌های جدید آن را خواهید دید.'
           "2_2": 'به دلیل پیگیری این موضوع، تعداد پاسخ‌های جدید را خواهید دید.'
-          "2": 'شما به دلیل <a href="/u/{{username}}/preferences">خواندن این موضوع</a>. تعداد پاسخ‌های جدید آن را خواهید دید.'
+          "2": 'شما به دلیل <a href="{{basePath}}/u/{{username}}/preferences">خواندن این موضوع</a>. تعداد پاسخ‌های جدید آن را خواهید دید.'
           "1_2": 'در صورتی که فردی با @نام به شما اشاره کند یا پاسخی دهد به شما اطلاع داده خواهد شد.'
           "1": 'در صورتی که فردی با @نام به شما اشاره کند یا پاسخی دهد، به شما اطلاع داده خواهد شد.'
           "0_7": 'شما تمام اعلان‌های این دسته‌بندی را نادیده گرفته اید'
@@ -1607,7 +1604,6 @@ fa_IR:
         upload: "متأسفیم، در بارگذاری آن پرونده خطایی روی داد. لطفاً دوباره تلاش کنید."
         file_too_large: "با عرض پوزش، حجم فایل بسیار بالاست (بالاترین حجم قابل بارگذاری {{max_size_kb}} کیلوبایت) است. چرا فایل‌های حجیم را در سرویس‌های ابری بارگذاری نمی‌کنید و لینک‌های آن را در انجمن قرار نمی‌دهید؟"
         too_many_uploads: "متأسفیم، هر بار تنها می‌توانید یک پرونده را بار‌گذاری کنید."
-        too_many_dragged_and_dropped_files: "با عرض پوزش، شما فقط می‌توانید 10 فایل به صورت یک‌جا بارگذاری کنید."
         upload_not_authorized: "با عرض پوزش، فایلی که در حال‌ بارگذاری آن هستید مجاز نیست. (پسوند‌های قابل بارگذاری: {{authorized_extensions}})."
         image_upload_not_allowed_for_new_user: "با عرض پوزش، کاربران جدید نمی توانند تصویر بار‌گذاری کنند."
         attachment_upload_not_allowed_for_new_user: "با عرض پوزش، کاربران جدید نمی توانند فایل پیوست بار‌گذاری کنند."
