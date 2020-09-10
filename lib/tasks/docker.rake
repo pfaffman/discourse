@@ -68,7 +68,7 @@ task 'docker:test' do
       if ENV["SINGLE_PLUGIN"]
         @good &&= run_or_fail("bundle exec rubocop --parallel plugins/#{ENV["SINGLE_PLUGIN"]}")
         @good &&= run_or_fail("bundle exec ruby script/i18n_lint.rb plugins/#{ENV["SINGLE_PLUGIN"]}/config/locales/{client,server}.en.yml")
-        @good &&= run_or_fail("yarn eslint --global I18n --ext .es6 plugins/#{ENV['SINGLE_PLUGIN']}")
+        @good &&= run_or_fail("yarn eslint --global I18n --no-error-on-unmatched-pattern --ext .es6 plugins/#{ENV['SINGLE_PLUGIN']}")
 
         puts "Listing prettier offenses in #{ENV['SINGLE_PLUGIN']}:"
         @good &&= run_or_fail_prettier("plugins/#{ENV['SINGLE_PLUGIN']}/**/*.scss", "plugins/#{ENV['SINGLE_PLUGIN']}/**/*.{js,es6}")
