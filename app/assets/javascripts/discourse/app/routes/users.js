@@ -11,6 +11,7 @@ export default DiscourseRoute.extend({
     asc: { refreshModel: true },
     name: { refreshModel: false, replace: true },
     group: { refreshModel: true },
+    exclude_groups: { refreshModel: true },
     exclude_usernames: { refreshModel: true },
   },
 
@@ -27,6 +28,7 @@ export default DiscourseRoute.extend({
         name: "",
         group: null,
         exclude_usernames: null,
+        exclude_groups: null,
         lastUpdatedAt: null,
       });
     }
@@ -41,7 +43,10 @@ export default DiscourseRoute.extend({
   model(params) {
     return ajax("/directory-columns.json")
       .then((response) => {
-        params.order = params.order || response.directory_columns[0].name;
+        params.order =
+          params.order ||
+          response.directory_columns[0]?.name ||
+          "likes_received";
         return { params, columns: response.directory_columns };
       })
       .catch(popupAjaxError);
@@ -53,12 +58,5 @@ export default DiscourseRoute.extend({
       controller.loadGroups(),
       controller.loadUsers(model.params),
     ]);
-  },
-
-  actions: {
-    didTransition() {
-      this.controllerFor("users")._showFooter();
-      return true;
-    },
   },
 });

@@ -1,18 +1,25 @@
 import discourseComputed, { observes } from "discourse-common/utils/decorators";
 import Component from "@ember/component";
+import { action } from "@ember/object";
 import DiscourseURL from "discourse/lib/url";
-import FilterModeMixin from "discourse/mixins/filter-mode";
 import { next } from "@ember/runloop";
-import { renderedConnectorsFor } from "discourse/lib/plugin-connectors";
+import { filterTypeForMode } from "discourse/lib/filter-mode";
+import { dependentKeyCompat } from "@ember/object/compat";
+import { tracked } from "@glimmer/tracking";
 
-export default Component.extend(FilterModeMixin, {
+export default Component.extend({
   tagName: "ul",
   classNameBindings: [":nav", ":nav-pills"],
   elementId: "navigation-bar",
+  filterMode: tracked(),
+
+  @dependentKeyCompat
+  get filterType() {
+    return filterTypeForMode(this.filterMode);
+  },
 
   init() {
     this._super(...arguments);
-    this.set("connectors", renderedConnectorsFor("extra-nav-item", null, this));
   },
 
   @discourseComputed("filterType", "navItems")
@@ -63,33 +70,33 @@ export default Component.extend(FilterModeMixin, {
     DiscourseURL.appEvents.off("dom:clean", this, this.ensureDropClosed);
   },
 
-  actions: {
-    toggleDrop() {
-      this.set("expanded", !this.expanded);
+  @action
+  toggleDrop(event) {
+    event?.preventDefault();
+    this.set("expanded", !this.expanded);
 
-      if (this.expanded) {
-        DiscourseURL.appEvents.on("dom:clean", this, this.ensureDropClosed);
+    if (this.expanded) {
+      DiscourseURL.appEvents.on("dom:clean", this, this.ensureDropClosed);
 
-        next(() => {
-          if (!this.expanded) {
-            return;
-          }
+      next(() => {
+        if (!this.expanded) {
+          return;
+        }
 
-          $(this.element.querySelector(".drop a")).on("click", () => {
-            this.element.querySelector(".drop").style.display = "none";
+        $(this.element.querySelector(".drop a")).on("click", () => {
+          this.element.querySelector(".drop").style.display = "none";
 
-            next(() => {
-              this.ensureDropClosed();
-            });
-            return true;
-          });
-
-          $(window).on("click.navigation-bar", () => {
+          next(() => {
             this.ensureDropClosed();
-            return true;
           });
+          return true;
         });
-      }
-    },
+
+        $(window).on("click.navigation-bar", () => {
+          this.ensureDropClosed();
+          return true;
+        });
+      });
+    }
   },
 });

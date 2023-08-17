@@ -50,9 +50,28 @@ export default RestModel.extend({
     return this.findItems();
   },
 
+  @discourseComputed("baseUrl", "filterParam", "actingUsername")
+  nextFindUrl() {
+    let findUrl = this.baseUrl;
+    if (this.filterParam) {
+      findUrl += `&filter=${this.filterParam}`;
+    }
+
+    if (this.actingUsername) {
+      findUrl += `&acting_username=${this.actingUsername}`;
+    }
+
+    return findUrl;
+  },
+
   @discourseComputed("loaded", "content.[]")
   noContent(loaded, content) {
     return loaded && content.length === 0;
+  },
+
+  @discourseComputed("nextFindUrl", "lastLoadedUrl")
+  canLoadMore() {
+    return this.nextFindUrl !== this.lastLoadedUrl;
   },
 
   remove(userAction) {
@@ -77,23 +96,12 @@ export default RestModel.extend({
   },
 
   findItems() {
-    let findUrl = this.baseUrl;
-    if (this.filterParam) {
-      findUrl += `&filter=${this.filterParam}`;
-    }
-    if (this.noContentHelpKey) {
-      findUrl += `&no_results_help_key=${this.noContentHelpKey}`;
-    }
-
-    if (this.actingUsername) {
-      findUrl += `&acting_username=${this.actingUsername}`;
-    }
-
-    // Don't load the same stream twice. We're probably at the end.
-    const lastLoadedUrl = this.lastLoadedUrl;
-    if (lastLoadedUrl === findUrl) {
+    if (!this.canLoadMore) {
+      // Don't load the same stream twice. We're probably at the end.
       return Promise.resolve();
     }
+
+    const findUrl = this.nextFindUrl;
 
     if (this.loading) {
       return Promise.resolve();
@@ -102,9 +110,6 @@ export default RestModel.extend({
     this.set("loading", true);
     return ajax(findUrl)
       .then((result) => {
-        if (result && result.no_results_help) {
-          this.set("noContentHelp", result.no_results_help);
-        }
         if (result && result.user_actions) {
           const copy = A();
           result.user_actions.forEach((action) => {

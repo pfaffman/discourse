@@ -28,18 +28,12 @@ export default DiscourseRoute.extend({
           result.about.category_moderators[index].category = category;
         });
       }
+
       return result.about;
     });
   },
 
   titleToken() {
     return I18n.t("about.simple_title");
-  },
-
-  actions: {
-    didTransition() {
-      this.controllerFor("application").set("showFooter", true);
-      return true;
-    },
   },
 });

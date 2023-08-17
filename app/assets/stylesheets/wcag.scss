@@ -8,15 +8,16 @@
 }
 
 html.discourse-no-touch {
-  .btn-default,
-  .btn-icon {
+  .btn-default:not(.btn-flat, .btn-danger, .btn-primary),
+  .btn-icon:not(.btn-flat, .btn-danger, .btn-primary) {
     &.btn-default {
       .d-icon {
         color: var(--primary-medium);
       }
     }
     &:hover,
-    &.btn-hover {
+    &.btn-hover,
+    &:focus {
       .d-icon {
         color: var(--secondary);
       }
@@ -27,13 +28,17 @@ html.discourse-no-touch {
   }
   .btn-icon.ok,
   .btn-icon.cancel,
-  .btn-danger {
+  .btn-danger:not(.btn-flat) {
     .d-icon {
       color: var(--secondary);
     }
   }
   .btn-flat.delete.d-hover {
     background: var(--danger);
+  }
+
+  .select-kit.single-select .select-kit-header:focus {
+    border-color: var(--primary-medium);
   }
 }
 
@@ -45,7 +50,6 @@ html {
   }
 
   // Composer
-
   #reply-control .reply-to .reply-details .d-icon {
     opacity: 1;
     color: var(--primary-low-mid);
@@ -58,6 +62,11 @@ html {
         &:hover {
           color: var(--secondary);
         }
+      }
+    }
+    .btn-icon:not(.btn-flat, .btn-danger, .btn-primary):focus {
+      .d-icon {
+        color: currentColor;
       }
     }
   }
@@ -75,12 +84,8 @@ html {
     }
   }
 
-  div.menu-links-header button:hover,
-  div.menu-links-header button:focus {
-    background: var(--tertiary-high);
-  }
-
-  .menu-panel .panel-body-bottom .btn:hover {
+  .menu-panel .panel-body-bottom .btn:hover,
+  .menu-panel .panel-body-bottom .btn:focus {
     .d-icon {
       color: var(--primary);
     }
@@ -90,46 +95,27 @@ html {
     color: var(--primary-low-mid);
   }
 
-  .d-header-icons .icon:hover .d-icon,
-  .d-header-icons .icon:focus .d-icon {
-    color: var(--primary-high);
-  }
-
   .d-header-icons .unread-notifications {
     background: var(--tertiary);
+  }
+
+  .extra-info-wrapper {
+    --header_primary-high: var(--header_primary);
   }
 
   // Topic list
 
   table th {
-    color: var(--primary-medium);
-  }
-
-  .coldmap {
-    &-high {
-      color: #6c77cc !important;
-    }
-
-    &-med {
-      color: #548eaa !important;
-    }
-
-    &-low {
-      color: #32a1a5 !important;
-    }
+    color: var(--primary-high);
   }
 
   .heatmap-high,
-  .heatmap-high a {
-    color: #dc3249 !important;
-  }
+  .heatmap-high a,
   .heatmap-med,
-  .heatmap-med a {
-    color: #ae5b54 !important;
-  }
+  .heatmap-med a,
   .heatmap-low,
   .heatmap-low a {
-    color: #8f6d5b !important;
+    color: var(--primary-medium) !important;
   }
 
   .badge-notification {
@@ -147,6 +133,10 @@ html {
     .period-chooser-row
     .top-date-string {
     color: var(--primary-high);
+  }
+
+  .topic-list .posters a:first-child .avatar.latest:not(.single) {
+    box-shadow: 0 0 0 2px var(--tertiary);
   }
 
   // Posts
@@ -219,64 +209,9 @@ html {
 
   nav.post-controls {
     .actions {
-      .double-button {
-        &:hover {
-          button {
-            background: var(--primary-medium);
-            color: var(--secondary);
-            .d-icon {
-              color: var(--secondary);
-            }
-            &.has-like {
-              .d-icon {
-                color: var(--love-low);
-              }
-            }
-          }
-        }
-        button {
-          &.like {
-            // Like button with 0 likes
-            &.d-hover {
-              background: var(--love-low);
-              .d-icon {
-                color: var(--love-low);
-              }
-            }
-          }
-          &.has-like {
-            // Like button after I've liked
-            .d-icon {
-              color: var(--love);
-            }
-            &.d-hover {
-              background: var(--primary-medium);
-              .d-icon {
-                color: var(--secondary);
-              }
-            }
-          }
-
-          &.button-count {
-            &.d-hover {
-              background: var(--primary-medium);
-              color: var(--secondary);
-            }
-            + .toggle-like {
-              &.d-hover {
-                background: var(--primary-medium);
-                color: var(--secondary);
-              }
-            }
-          }
-        }
-      }
-      button.create {
+      button.create,
+      button.create .d-icon {
         color: var(--primary-high-or-secondary-low);
-
-        .d-icon {
-          color: var(--primary-high-or-secondary-low);
-        }
       }
       button {
         &.d-hover,
@@ -311,6 +246,16 @@ html {
           }
         }
       }
+      .double-button .button-count {
+        color: var(--primary-medium);
+      }
+      .double-button:hover {
+        button,
+        .d-icon,
+        button.has-like .d-icon {
+          color: var(--love);
+        }
+      }
     }
 
     .show-replies {
@@ -343,4 +288,29 @@ html {
       color: var(--secondary);
     }
   }
+
+  .cooked mark,
+  .d-editor-preview mark {
+    background-color: yellow; // resets to browser default
+  }
+}
+
+// chat
+
+.no-touch
+  .chat-messages-container
+  .chat-message:hover
+  .chat-message-react-btn:hover {
+  .d-icon {
+    color: var(--primary) !important;
+  }
+}
+
+// sidebar
+
+.sidebar-wrapper
+  .sidebar-sections
+  .sidebar-section-link-suffix.icon.unread
+  svg {
+  color: var(--tertiary);
 }

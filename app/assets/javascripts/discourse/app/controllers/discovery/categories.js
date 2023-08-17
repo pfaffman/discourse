@@ -1,8 +1,9 @@
-import DiscoveryController from "discourse/controllers/discovery";
 import { inject as controller } from "@ember/controller";
+import { reads } from "@ember/object/computed";
+import DiscoveryController from "discourse/controllers/discovery";
+import { action } from "@ember/object";
 import { dasherize } from "@ember/string";
 import discourseComputed from "discourse-common/utils/decorators";
-import { reads } from "@ember/object/computed";
 
 const subcategoryStyleComponentNames = {
   rows: "categories_only",
@@ -11,19 +12,31 @@ const subcategoryStyleComponentNames = {
   boxes_with_featured_topics: "categories_boxes_with_topics",
 };
 
-export default DiscoveryController.extend({
-  discovery: controller(),
+const mobileCompatibleViews = [
+  "categories_with_featured_topics",
+  "subcategories_with_featured_topics",
+];
+
+export default class CategoriesController extends DiscoveryController {
+  @controller discovery;
 
   // this makes sure the composer isn't scoping to a specific category
-  category: null,
+  category = null;
 
-  canEdit: reads("currentUser.staff"),
+  @reads("currentUser.staff") canEdit;
+
+  @discourseComputed
+  isCategoriesRoute() {
+    return this.router.currentRouteName === "discovery.categories";
+  }
 
   @discourseComputed("model.parentCategory")
   categoryPageStyle(parentCategory) {
-    let style = this.site.mobileView
-      ? "categories_with_featured_topics"
-      : this.siteSettings.desktop_category_page_style;
+    let style = this.siteSettings.desktop_category_page_style;
+
+    if (this.site.mobileView && !mobileCompatibleViews.includes(style)) {
+      style = mobileCompatibleViews[0];
+    }
 
     if (parentCategory) {
       style =
@@ -33,14 +46,25 @@ export default DiscoveryController.extend({
     }
 
     const componentName =
-      parentCategory && style === "categories_and_latest_topics"
+      parentCategory &&
+      (style === "categories_and_latest_topics" ||
+        style === "categories_and_latest_topics_created_date")
         ? "categories_only"
         : style;
     return dasherize(componentName);
-  },
-  actions: {
-    refresh() {
-      this.send("triggerRefresh");
-    },
-  },
-});
+  }
+
+  @action
+  showInserted(event) {
+    event?.preventDefault();
+    const tracker = this.topicTrackingState;
+    // Move inserted into topics
+    this.model.loadBefore(tracker.get("newIncoming"), true);
+    tracker.resetTracking();
+  }
+
+  @action
+  refresh() {
+    this.send("triggerRefresh");
+  }
+}

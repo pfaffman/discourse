@@ -15,8 +15,12 @@ export function setTransientHeader(key, value) {
   _transientHeader = { key, value };
 }
 
-export function viewTrackingRequired() {
+export function trackNextAjaxAsPageview() {
   _trackView = true;
+}
+
+export function resetAjax() {
+  _trackView = false;
 }
 
 export function setLogoffCallback(cb) {
@@ -29,14 +33,9 @@ export function handleLogoff(xhr) {
   }
 }
 
-function handleRedirect(data) {
-  if (
-    data &&
-    data.getResponseHeader &&
-    data.getResponseHeader("Discourse-Xhr-Redirect")
-  ) {
-    window.location.replace(data.responseText);
-    window.location.reload();
+function handleRedirect(xhr) {
+  if (xhr && xhr.getResponseHeader("Discourse-Xhr-Redirect")) {
+    window.location = xhr.responseText;
   }
 }
 
@@ -99,7 +98,7 @@ export function ajax() {
     }
 
     args.success = (data, textStatus, xhr) => {
-      handleRedirect(data);
+      handleRedirect(xhr);
       handleLogoff(xhr);
 
       run(() => {
@@ -110,7 +109,7 @@ export function ajax() {
       });
 
       if (args.returnXHR) {
-        data = { result: data, xhr: xhr };
+        data = { result: data, xhr };
       }
 
       run(null, resolve, data);
@@ -145,8 +144,8 @@ export function ajax() {
 
       run(null, reject, {
         jqXHR: xhr,
-        textStatus: textStatus,
-        errorThrown: errorThrown,
+        textStatus,
+        errorThrown,
       });
     };
 

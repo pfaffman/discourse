@@ -1,15 +1,21 @@
-import Controller, { inject as controller } from "@ember/controller";
+import Controller from "@ember/controller";
 import Group from "discourse/models/group";
 import { action } from "@ember/object";
 import discourseDebounce from "discourse-common/lib/debounce";
 import showModal from "discourse/lib/show-modal";
-import { equal } from "@ember/object/computed";
+import { and, equal } from "@ember/object/computed";
 import { longDate } from "discourse/lib/formatter";
-import { observes } from "discourse-common/utils/decorators";
 
 export default Controller.extend({
-  application: controller(),
-  queryParams: ["period", "order", "asc", "name", "group", "exclude_usernames"],
+  queryParams: [
+    "period",
+    "order",
+    "asc",
+    "name",
+    "group",
+    "exclude_usernames",
+    "exclude_groups",
+  ],
   period: "weekly",
   order: "",
   asc: null,
@@ -17,10 +23,12 @@ export default Controller.extend({
   group: null,
   nameInput: null,
   exclude_usernames: null,
+  exclude_groups: null,
   isLoading: false,
   columns: null,
-  groupsOptions: null,
+  groupOptions: null,
   params: null,
+  showGroupFilter: and("currentUser", "groupOptions"),
 
   showTimeRead: equal("period", "all"),
 
@@ -66,21 +74,25 @@ export default Controller.extend({
   },
 
   loadGroups() {
-    return Group.findAll({ ignore_automatic: true }).then((groups) => {
-      const groupOptions = groups.map((group) => {
-        return {
-          name: group.full_name || group.name,
-          id: group.name,
-        };
+    if (this.currentUser) {
+      return Group.findAll({ ignore_automatic: true }).then((groups) => {
+        const groupOptions = groups
+          .filter((group) => group.can_see_members)
+          .map((group) => {
+            return {
+              name: group.full_name || group.name,
+              id: group.name,
+            };
+          });
+        this.set("groupOptions", groupOptions);
       });
-      this.set("groupOptions", groupOptions);
-    });
+    }
   },
 
   @action
   groupChanged(_, groupAttrs) {
     // First param is the group name, which include none or 'all groups'. Ignore this and look at second param.
-    this.set("group", groupAttrs.id);
+    this.set("group", groupAttrs?.id);
   },
 
   @action
@@ -99,11 +111,6 @@ export default Controller.extend({
       "params.name": username,
     });
     this.loadUsers();
-  },
-
-  @observes("model.canLoadMore")
-  _showFooter() {
-    this.set("application.showFooter", !this.get("model.canLoadMore"));
   },
 
   @action

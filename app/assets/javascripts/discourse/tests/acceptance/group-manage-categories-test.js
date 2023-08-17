@@ -12,7 +12,7 @@ acceptance("Managing Group Category Notification Defaults", function () {
     await visit("/g/discourse/manage/categories");
 
     assert.ok(
-      exists(".group-members tr"),
+      exists(".group-members .group-member"),
       "it should redirect to members page for an anonymous user"
     );
   });
@@ -23,7 +23,7 @@ acceptance("Managing Group Category Notification Defaults", function (needs) {
   test("As an admin", async function (assert) {
     await visit("/g/discourse/manage/categories");
 
-    assert.equal(
+    assert.strictEqual(
       count(".groups-notifications-form .category-selector"),
       5,
       "it should display category inputs"
@@ -35,7 +35,7 @@ acceptance("Managing Group Category Notification Defaults", function (needs) {
 
     await visit("/g/discourse/manage/categories");
 
-    assert.equal(
+    assert.strictEqual(
       count(".groups-notifications-form .category-selector"),
       5,
       "it should display category inputs"

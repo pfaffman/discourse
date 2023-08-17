@@ -2,7 +2,7 @@ import {
   acceptance,
   count,
   exists,
-  queryAll,
+  query,
 } from "discourse/tests/helpers/qunit-helpers";
 import { click, fillIn, visit } from "@ember/test-helpers";
 import { test } from "qunit";
@@ -22,30 +22,49 @@ acceptance("Search - Mobile", function (needs) {
 
     assert.ok(!exists(".search-results .fps-topic"), "no results by default");
 
-    await click(".search-advanced-title");
+    await click(".advanced-filters summary");
 
-    assert.equal(
-      count(".search-advanced-filters"),
-      1,
+    assert.ok(
+      exists(".advanced-filters[open]"),
       "it should expand advanced search filters"
     );
 
     await fillIn(".search-query", "discourse");
     await click(".search-cta");
 
-    assert.equal(count(".fps-topic"), 1, "has one post");
+    assert.strictEqual(count(".fps-topic"), 1, "has one post");
 
-    assert.ok(
-      !exists(".search-advanced-filters"),
+    assert.notOk(
+      exists(".advanced-filters[open]"),
       "it should collapse advanced search filters"
     );
 
     await click("#search-button");
 
-    assert.equal(
-      queryAll("input.full-page-search").val(),
+    assert.strictEqual(
+      query("input.full-page-search").value,
       "discourse",
       "it does not reset input when hitting search icon again"
+    );
+  });
+
+  test("Search context in full page search", async function (assert) {
+    await visit("/search?context=tag&context_id=dev&skip_context=true");
+
+    assert.ok(exists(".search-header .search-context"));
+
+    assert.strictEqual(
+      query(".search-header .search-context input[type='checkbox']").checked,
+      false,
+      "checkbox matches query parameter"
+    );
+
+    await click(".search-header .search-context label");
+
+    assert.strictEqual(
+      query(".search-header .search-context input[type='checkbox']").checked,
+      true,
+      "checkbox toggling works"
     );
   });
 });

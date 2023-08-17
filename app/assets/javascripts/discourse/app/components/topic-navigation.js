@@ -1,18 +1,27 @@
+import Component from "@ember/component";
+import { inject as service } from "@ember/service";
 import PanEvents, {
   SWIPE_DISTANCE_THRESHOLD,
   SWIPE_VELOCITY_THRESHOLD,
 } from "discourse/mixins/pan-events";
-import Component from "@ember/component";
 import EmberObject from "@ember/object";
 import discourseDebounce from "discourse-common/lib/debounce";
-import { later, next } from "@ember/runloop";
+import { headerOffset } from "discourse/lib/offset-calculator";
+import { next } from "@ember/runloop";
+import discourseLater from "discourse-common/lib/later";
 import { observes } from "discourse-common/utils/decorators";
-import showModal from "discourse/lib/show-modal";
+import JumpToPost from "./modal/jump-to-post";
 
 const MIN_WIDTH_TIMELINE = 924,
   MIN_HEIGHT_TIMELINE = 325;
 
 export default Component.extend(PanEvents, {
+  modal: service(),
+
+  classNameBindings: [
+    "info.topicProgressExpanded:topic-progress-expanded",
+    "info.renderTimeline:with-timeline:with-topic-progress",
+  ],
   composerOpen: null,
   info: null,
   isPanning: false,
@@ -40,21 +49,23 @@ export default Component.extend(PanEvents, {
 
     let info = this.info;
 
+    // Safari's window.innerWidth doesn't match CSS media queries
+    let windowWidth = this.capabilities.isSafari
+      ? document.documentElement.clientWidth
+      : window.innerWidth;
+
     if (info.get("topicProgressExpanded")) {
       info.set("renderTimeline", true);
     } else {
       let renderTimeline = !this.site.mobileView;
 
       if (renderTimeline) {
-        const width = window.innerWidth,
-          composer = document.getElementById("reply-control"),
-          headerContainer = document.querySelector(".d-header"),
-          headerHeight = (headerContainer && headerContainer.offsetHeight) || 0;
+        const composer = document.getElementById("reply-control");
 
         if (composer) {
           renderTimeline =
-            width > MIN_WIDTH_TIMELINE &&
-            window.innerHeight - composer.offsetHeight - headerHeight >
+            windowWidth > MIN_WIDTH_TIMELINE &&
+            window.innerHeight - composer.offsetHeight - headerOffset() >
               MIN_HEIGHT_TIMELINE;
         }
       }
@@ -85,7 +96,9 @@ export default Component.extend(PanEvents, {
           !$target.is("#discourse-modal") &&
           !$parents.is(".modal-footer") &&
           ($target.is(".topic-timeline") ||
-            !$parents.is("#topic-progress-wrapper"))
+            !$parents.is("#topic-progress-wrapper")) &&
+          !$parents.is(".timeline-open-jump-to-post-prompt-btn") &&
+          !$target.is(".timeline-open-jump-to-post-prompt-btn")
         ) {
           this._collapseFullscreen();
         }
@@ -109,7 +122,7 @@ export default Component.extend(PanEvents, {
   _collapseFullscreen() {
     if (this.get("info.topicProgressExpanded")) {
       $(".timeline-fullscreen").removeClass("show");
-      later(() => {
+      discourseLater(() => {
         if (!this.element || this.isDestroying || this.isDestroyed) {
           return;
         }
@@ -122,13 +135,12 @@ export default Component.extend(PanEvents, {
 
   keyboardTrigger(e) {
     if (e.type === "jump") {
-      const controller = showModal("jump-to-post", {
-        modalClass: "jump-to-post-modal",
-      });
-      controller.setProperties({
-        topic: this.topic,
-        jumpToIndex: this.attrs.jumpToIndex,
-        jumpToDate: this.attrs.jumpToDate,
+      this.modal.show(JumpToPost, {
+        model: {
+          topic: this.topic,
+          jumpToIndex: this.attrs.jumpToIndex,
+          jumpToDate: this.attrs.jumpToDate,
+        },
       });
     }
   },
@@ -140,13 +152,13 @@ export default Component.extend(PanEvents, {
     $timelineContainer.addClass("animate");
     if (this._shouldPanClose(event)) {
       $timelineContainer.css("--offset", `${maxOffset}px`);
-      later(() => {
+      discourseLater(() => {
         this._collapseFullscreen();
         $timelineContainer.removeClass("animate");
       }, 200);
     } else {
       $timelineContainer.css("--offset", 0);
-      later(() => {
+      discourseLater(() => {
         $timelineContainer.removeClass("animate");
       }, 200);
     }
@@ -161,10 +173,18 @@ export default Component.extend(PanEvents, {
   },
 
   panStart(e) {
+    const target = e.originalEvent.target;
+
+    if (
+      target.classList.contains("docked") ||
+      !target.closest(".timeline-container")
+    ) {
+      return;
+    }
+
     e.originalEvent.preventDefault();
-    const center = e.center;
-    const $centeredElement = $(document.elementFromPoint(center.x, center.y));
-    if ($centeredElement.parents(".timeline-scrollarea-wrapper").length) {
+    const centeredElement = document.elementFromPoint(e.center.x, e.center.y);
+    if (centeredElement.closest(".timeline-scrollarea-wrapper")) {
       this.isPanning = false;
     } else if (e.direction === "up" || e.direction === "down") {
       this.isPanning = true;

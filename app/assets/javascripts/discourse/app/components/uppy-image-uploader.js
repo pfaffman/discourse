@@ -1,32 +1,46 @@
 import Component from "@ember/component";
+import { action } from "@ember/object";
 import { or } from "@ember/object/computed";
 import UppyUploadMixin from "discourse/mixins/uppy-upload";
-import { ajax } from "discourse/lib/ajax";
-import discourseComputed from "discourse-common/utils/decorators";
+import discourseComputed, { on } from "discourse-common/utils/decorators";
 import { getURLWithCDN } from "discourse-common/lib/get-url";
 import { isEmpty } from "@ember/utils";
-import lightbox from "discourse/lib/lightbox";
+import {
+  cleanupLightboxes,
+  default as lightbox,
+  setupLightboxes,
+} from "discourse/lib/lightbox";
 import { next } from "@ember/runloop";
-import { popupAjaxError } from "discourse/lib/ajax-error";
+import { htmlSafe } from "@ember/template";
+import { authorizesOneOrMoreExtensions } from "discourse/lib/uploads";
+import I18n from "I18n";
 
 export default Component.extend(UppyUploadMixin, {
   classNames: ["image-uploader"],
-  loadingLightbox: false,
+  disabled: or("notAllowed", "uploading", "processing"),
 
-  init() {
-    this._super(...arguments);
-    this._applyLightbox();
+  @discourseComputed("siteSettings.enable_experimental_lightbox")
+  experimentalLightboxEnabled(experimentalLightboxEnabled) {
+    return experimentalLightboxEnabled;
   },
 
-  willDestroyElement() {
-    this._super(...arguments);
-    const elem = $("a.lightbox");
-    if (elem && typeof elem.magnificPopup === "function") {
-      $("a.lightbox").magnificPopup("close");
+  @discourseComputed("disabled", "notAllowed")
+  disabledReason(disabled, notAllowed) {
+    if (disabled && notAllowed) {
+      return I18n.t("post.errors.no_uploads_authorized");
     }
   },
 
-  uploadingOrProcessing: or("uploading", "processing"),
+  @discourseComputed(
+    "currentUser.staff",
+    "siteSettings.{authorized_extensions,authorized_extensions_for_staff}"
+  )
+  notAllowed() {
+    return !authorizesOneOrMoreExtensions(
+      this.currentUser?.staff,
+      this.siteSettings
+    );
+  },
 
   @discourseComputed("imageUrl", "placeholderUrl")
   showingPlaceholder(imageUrl, placeholderUrl) {
@@ -36,15 +50,15 @@ export default Component.extend(UppyUploadMixin, {
   @discourseComputed("placeholderUrl")
   placeholderStyle(url) {
     if (isEmpty(url)) {
-      return "".htmlSafe();
+      return htmlSafe("");
     }
-    return `background-image: url(${url})`.htmlSafe();
+    return htmlSafe(`background-image: url(${url})`);
   },
 
   @discourseComputed("imageUrl")
   imageCDNURL(url) {
     if (isEmpty(url)) {
-      return "".htmlSafe();
+      return htmlSafe("");
     }
 
     return getURLWithCDN(url);
@@ -52,7 +66,7 @@ export default Component.extend(UppyUploadMixin, {
 
   @discourseComputed("imageCDNURL")
   backgroundStyle(url) {
-    return `background-image: url(${url})`.htmlSafe();
+    return htmlSafe(`background-image: url(${url})`);
   },
 
   @discourseComputed("imageUrl")
@@ -67,69 +81,70 @@ export default Component.extend(UppyUploadMixin, {
     return { imagesOnly: true };
   },
 
+  _uppyReady() {
+    this._onPreProcessComplete(() => {
+      this.set("processing", false);
+    });
+  },
+
   uploadDone(upload) {
     this.setProperties({
-      imageUrl: upload.url,
-      imageId: upload.id,
       imageFilesize: upload.human_filesize,
       imageFilename: upload.original_filename,
       imageWidth: upload.width,
       imageHeight: upload.height,
     });
 
-    this._applyLightbox();
-
+    // the value of the property used for imageUrl should be set
+    // in this callback. this should be done in cases where imageUrl
+    // is bound to a computed property of the parent component.
     if (this.onUploadDone) {
       this.onUploadDone(upload);
+    } else {
+      this.set("imageUrl", upload.url);
     }
   },
 
-  _openLightbox() {
-    next(() =>
-      $(this.element.querySelector("a.lightbox")).magnificPopup("open")
-    );
-  },
-
+  @on("didRender")
   _applyLightbox() {
-    if (this.imageUrl) {
+    if (this.experimentalLightboxEnabled) {
+      setupLightboxes({
+        container: this.element,
+        selector: ".lightbox",
+      });
+    } else {
       next(() => lightbox(this.element, this.siteSettings));
     }
   },
 
-  actions: {
-    toggleLightbox() {
-      if (this.imageFilename) {
-        this._openLightbox();
-      } else {
-        this.set("loadingLightbox", true);
-
-        ajax(`/uploads/lookup-metadata`, {
-          type: "POST",
-          data: { url: this.imageUrl },
-        })
-          .then((json) => {
-            this.setProperties({
-              imageFilename: json.original_filename,
-              imageFilesize: json.human_filesize,
-              imageWidth: json.width,
-              imageHeight: json.height,
-            });
-
-            this._openLightbox();
-            this.set("loadingLightbox", false);
-          })
-          .catch(popupAjaxError);
+  @on("willDestroyElement")
+  _closeOnRemoval() {
+    if (this.experimentalLightboxEnabled) {
+      cleanupLightboxes();
+    } else {
+      if ($.magnificPopup?.instance) {
+        $.magnificPopup.instance.close();
       }
-    },
+    }
+  },
 
+  @action
+  toggleLightbox() {
+    $(this.element.querySelector("a.lightbox"))?.magnificPopup("open");
+  },
+
+  actions: {
     trash() {
-      this.setProperties({ imageUrl: null, imageId: null });
-
       // uppy needs to be reset to allow for more uploads
       this._reset();
 
+      // the value of the property used for imageUrl should be cleared
+      // in this callback. this should be done in cases where imageUrl
+      // is bound to a computed property of the parent component.
       if (this.onUploadDeleted) {
         this.onUploadDeleted();
+      } else {
+        this.setProperties({ imageUrl: null });
       }
     },
   },

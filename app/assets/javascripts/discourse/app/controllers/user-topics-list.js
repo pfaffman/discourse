@@ -1,8 +1,6 @@
-import Controller, { inject as controller } from "@ember/controller";
-import discourseComputed, {
-  observes,
-  on,
-} from "discourse-common/utils/decorators";
+import Controller from "@ember/controller";
+import discourseComputed from "discourse-common/utils/decorators";
+import { reads } from "@ember/object/computed";
 import BulkTopicSelection from "discourse/mixins/bulk-topic-selection";
 import { action } from "@ember/object";
 import Topic from "discourse/models/topic";
@@ -14,31 +12,15 @@ import {
 
 // Lists of topics on a user's page.
 export default Controller.extend(BulkTopicSelection, {
-  application: controller(),
-
   hideCategory: false,
   showPosters: false,
-  incomingCount: 0,
   channel: null,
   tagsForUser: null,
+  incomingCount: reads("pmTopicTrackingState.newIncoming.length"),
 
-  @on("init")
-  _initialize() {
-    this.newIncoming = [];
-  },
-
-  saveScrollPosition() {
-    this.session.set("topicListScrollPosition", $(window).scrollTop());
-  },
-
-  @observes("model.canLoadMore")
-  _showFooter() {
-    this.set("application.showFooter", !this.get("model.canLoadMore"));
-  },
-
-  @discourseComputed("incomingCount")
-  hasIncoming(incomingCount) {
-    return incomingCount > 0;
+  @discourseComputed("model.topics.length", "incomingCount")
+  noContent(topicsLength, incomingCount) {
+    return topicsLength === 0 && incomingCount === 0;
   },
 
   @discourseComputed("filter", "model.topics.length")
@@ -51,31 +33,12 @@ export default Controller.extend(BulkTopicSelection, {
     return filter === UNREAD_FILTER && hasTopics;
   },
 
-  subscribe(channel) {
-    this.set("channel", channel);
-
-    this.messageBus.subscribe(channel, (data) => {
-      if (this.newIncoming.indexOf(data.topic_id) === -1) {
-        this.newIncoming.push(data.topic_id);
-        this.incrementProperty("incomingCount");
-      }
-    });
+  subscribe() {
+    this.pmTopicTrackingState.trackIncoming(this.inbox, this.filter);
   },
 
   unsubscribe() {
-    const channel = this.channel;
-    if (channel) {
-      this.messageBus.unsubscribe(channel);
-    }
-    this._resetTracking();
-    this.set("channel", null);
-  },
-
-  _resetTracking() {
-    this.setProperties({
-      newIncoming: [],
-      incomingCount: 0,
-    });
+    this.pmTopicTrackingState.stopIncomingTracking();
   },
 
   @action
@@ -86,15 +49,18 @@ export default Controller.extend(BulkTopicSelection, {
 
     const opts = {
       inbox: this.inbox,
-      topicIds: topicIds,
+      topicIds,
     };
 
     if (this.group) {
       opts.groupName = this.group.name;
     }
 
-    Topic.pmResetNew(opts).then(() => {
-      this.send("refresh");
+    Topic.pmResetNew(opts).then((result) => {
+      if (result && result.topic_ids.length > 0) {
+        this.pmTopicTrackingState.removeTopics(result.topic_ids);
+        this.send("refresh");
+      }
     });
   },
 
@@ -104,9 +70,14 @@ export default Controller.extend(BulkTopicSelection, {
   },
 
   @action
-  showInserted() {
-    this.model.loadBefore(this.newIncoming);
-    this._resetTracking();
-    return false;
+  showInserted(event) {
+    event?.preventDefault();
+    this.model.loadBefore(this.pmTopicTrackingState.newIncoming);
+    this.pmTopicTrackingState.resetIncomingTracking();
+  },
+
+  @action
+  refresh() {
+    this.send("triggerRefresh");
   },
 });

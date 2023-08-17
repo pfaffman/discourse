@@ -1,4 +1,5 @@
-import { avatarImg, formatUsername } from "discourse/lib/utilities";
+import { formatUsername } from "discourse/lib/utilities";
+import { avatarImg } from "discourse-common/lib/avatar-utils";
 import I18n from "I18n";
 import { get } from "@ember/object";
 import { htmlSafe } from "@ember/template";
@@ -72,7 +73,7 @@ function renderAvatar(user, options) {
       size: options.imageSize,
       extraClasses: get(user, "extras") || options.extraClasses,
       title: title || displayName,
-      avatarTemplate: avatarTemplate,
+      avatarTemplate,
     });
   } else {
     return "";

@@ -1,4 +1,11 @@
-{{#if model.noContent}}
-  <div class="alert alert-info">{{html-safe model.noContentHelp}}</div>
+{{#if (or this.loading this.model.stream.canLoadMore)}}
+  {{hide-application-footer}}
 {{/if}}
-{{user-stream stream=model}}
+
+{{#if this.model.stream.noContent}}
+  <EmptyState
+    @title={{this.model.emptyState.title}}
+    @body={{this.model.emptyState.body}}
+  />
+{{/if}}
+<UserStream @stream={{this.model.stream}} />
